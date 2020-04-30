@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Train Buddy</string>
-    <string name="login">Login</string>
-    <string name="start_training">Start Training</string>
+    <string name="login_register">Login/Register</string>
+    <string name="start_training_more_options">Start Training/ More options</string>
     <string name="retrieving_state">Checking Status...</string>
+    <string name="not_available">Resource not available yet</string>
 </resources>

@@ -2,6 +2,7 @@ package me.kxtre.trainbuddy
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import me.kxtre.trainbuddy.controllers.AuthenticationController
@@ -15,22 +16,40 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
-        var button = binding.buttonMain
+        val button = binding.buttonMain
         AuthenticationController.checkAuthentication(this, object : Callback {
 
             override fun onSucess() {
                 StateController.changeState(State.LOGGED)
-                button.text = getString(R.string.start_training)
+                button.text = getString(R.string.start_training_more_options)
             }
 
             override fun onError() {
                 StateController.changeState(State.GUEST)
-                button.text = getString(R.string.login)
+                button.text = getString(R.string.login_register)
             }
         })
 
+        button.setOnLongClickListener { _button -> when(StateController.state) {
+            State.Initial -> initialButtonLongClick(_button)
+            State.GUEST -> guestButtonLongClick(_button)
+            State.LOGGED -> loggedButtonLongClick(_button)
+        } }
 
 
+    }
+
+    private fun loggedButtonLongClick(_button: View): Boolean {
+        goToMoreOptionsView(this)
+    }
+
+    private fun guestButtonLongClick(_button: View): Boolean {
+        goToRegisterView(this)
+    }
+
+    private fun initialButtonLongClick(button: View): Boolean {
+        Toast.makeText(this, R.string.not_available, Toast.LENGTH_SHORT).show()
+        return  true
     }
 
     fun mainButtonClick(button: View) {
@@ -42,11 +61,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initialButtonClick(button: View) {
-        TODO("Not yet implemented")
+        Toast.makeText(this, R.string.not_available, Toast.LENGTH_SHORT).show()
     }
 
     private fun guestButtonClick(button: View) {
-        TODO("Not yet implemented")
+        goToLoginView(this)
     }
 
     private fun loggedButtonClick(button: View) {
