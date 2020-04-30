@@ -1,7 +1,10 @@
 package me.kxtre.trainbuddy
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
@@ -13,9 +16,24 @@ import me.kxtre.trainbuddy.models.State
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
+    val INTENT_STATE_CHANGE = 1000
+    val INTENT_START_TRAINING = 1001
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        val button = binding.buttonMain
+        evaluateLoginStatus()
+
+        button.setOnLongClickListener { _button -> when(StateController.state) {
+            State.Initial -> initialButtonLongClick(_button)
+            State.GUEST -> guestButtonLongClick(_button)
+            State.LOGGED -> loggedButtonLongClick(_button)
+        } }
+
+
+    }
+
+    private fun evaluateLoginStatus() {
         val button = binding.buttonMain
         AuthenticationController.checkAuthentication(this, object : Callback {
 
@@ -29,22 +47,26 @@ class MainActivity : AppCompatActivity() {
                 button.text = getString(R.string.login_register)
             }
         })
-
-        button.setOnLongClickListener { _button -> when(StateController.state) {
-            State.Initial -> initialButtonLongClick(_button)
-            State.GUEST -> guestButtonLongClick(_button)
-            State.LOGGED -> loggedButtonLongClick(_button)
-        } }
-
-
     }
 
     private fun loggedButtonLongClick(_button: View): Boolean {
         goToMoreOptionsView(this)
+        return true
+    }
+
+    private fun goToMoreOptionsView(mainActivity: MainActivity) {
+        val intent = Intent(this, RegisterActivity::class.java)
+        startActivityForResult(intent, INTENT_START_TRAINING)
     }
 
     private fun guestButtonLongClick(_button: View): Boolean {
         goToRegisterView(this)
+        return true
+    }
+
+    private fun goToRegisterView(mainActivity: MainActivity) {
+        val intent = Intent(this, RegisterActivity::class.java)
+        startActivityForResult(intent, INTENT_STATE_CHANGE)
     }
 
     private fun initialButtonLongClick(button: View): Boolean {
@@ -68,11 +90,32 @@ class MainActivity : AppCompatActivity() {
         goToLoginView(this)
     }
 
-    private fun loggedButtonClick(button: View) {
-        TODO("Not yet implemented")
-        /*List<Training> trainings = getAvailableTrainings(button)
-        Training training = decideBestTraining(button, trainings)
-        executeTraining(button, training)*/
+    private fun goToLoginView(mainActivity: MainActivity) {
+        val intent = Intent(this, LoginActivity::class.java)
+        startActivityForResult(intent, INTENT_STATE_CHANGE)
     }
 
+    private fun loggedButtonClick(button: View) {
+        List<Training> trainings = getAvailableTrainings(button)
+        Training training = decideBestTraining(button, trainings)
+        executeTraining(button, training)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if(resultCode !=  Activity.RESULT_OK) {
+            return;
+        }
+        if(requestCode == INTENT_STATE_CHANGE) {
+            evaluateLoginStatus()
+            return
+        }
+        if(requestCode == INTENT_START_TRAINING) {
+            val trainingID = data!!.getIntExtra("trainingID", 0)
+            if(trainingID == 0) {
+                return
+            }
+            executeTraining(findByIdInAvailableTrainings(trainingID))
+        }
+    }
 }
