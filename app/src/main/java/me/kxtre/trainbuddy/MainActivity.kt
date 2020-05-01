@@ -9,10 +9,13 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import me.kxtre.trainbuddy.controllers.AuthenticationController
+import me.kxtre.trainbuddy.controllers.ContextEngine
+import me.kxtre.trainbuddy.controllers.Controller
 import me.kxtre.trainbuddy.controllers.StateController
 import me.kxtre.trainbuddy.databinding.ActivityMainBinding
 import me.kxtre.trainbuddy.interfaces.Callback
 import me.kxtre.trainbuddy.models.State
+import me.kxtre.trainbuddy.models.Training
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -96,8 +99,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun loggedButtonClick(button: View) {
-        List<Training> trainings = getAvailableTrainings(button)
-        Training training = decideBestTraining(button, trainings)
+        val trainings = Controller.availableTrainings
+        val training = ContextEngine.decideBestTraining(trainings)
         executeTraining(button, training)
     }
 
@@ -115,7 +118,11 @@ class MainActivity : AppCompatActivity() {
             if(trainingID == 0) {
                 return
             }
-            executeTraining(findByIdInAvailableTrainings(trainingID))
+            try {
+                executeTraining(Controller.findByIdInAvailableTrainings(trainingID))
+            } catch (e: Error) {
+                Toast.makeText(this, R.string.training_not_available, Toast.LENGTH_SHORT).show()
+            }
         }
     }
 }

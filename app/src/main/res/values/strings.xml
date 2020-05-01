@@ -4,4 +4,5 @@
     <string name="start_training_more_options">Start Training/ More options</string>
     <string name="retrieving_state">Checking Status...</string>
     <string name="not_available">Resource not available yet</string>
+    <string name="training_not_available">Training is still not available to you</string>
 </resources>
