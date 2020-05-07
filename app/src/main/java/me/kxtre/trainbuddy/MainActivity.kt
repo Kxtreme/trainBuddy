@@ -1,30 +1,32 @@
 package me.kxtre.trainbuddy
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
-import me.kxtre.trainbuddy.controllers.AuthenticationController
-import me.kxtre.trainbuddy.controllers.ContextEngine
-import me.kxtre.trainbuddy.controllers.Controller
-import me.kxtre.trainbuddy.controllers.StateController
+import me.kxtre.trainbuddy.controllers.*
 import me.kxtre.trainbuddy.databinding.ActivityMainBinding
 import me.kxtre.trainbuddy.interfaces.Callback
 import me.kxtre.trainbuddy.models.State
-import me.kxtre.trainbuddy.models.Training
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
+    val SHARED_PREFERENCES = "Shared"
     val INTENT_STATE_CHANGE = 1000
     val INTENT_START_TRAINING = 1001
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         val button = binding.buttonMain
+        val sharedPreferences = getSharedPreferences(
+            SHARED_PREFERENCES,
+            Context.MODE_PRIVATE
+        )
+        DataManager.INSTANCE.sharedPreferences = sharedPreferences
         evaluateLoginStatus()
 
         button.setOnLongClickListener { _button -> when(StateController.state) {
