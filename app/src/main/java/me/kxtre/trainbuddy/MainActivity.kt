@@ -9,6 +9,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import me.kxtre.trainbuddy.controllers.*
+import me.kxtre.trainbuddy.controllers.StateController.INTENT_START_TRAINING
+import me.kxtre.trainbuddy.controllers.StateController.INTENT_STATE_CHANGE
 import me.kxtre.trainbuddy.databinding.ActivityMainBinding
 import me.kxtre.trainbuddy.interfaces.Callback
 import me.kxtre.trainbuddy.models.State
@@ -16,8 +18,6 @@ import me.kxtre.trainbuddy.models.State
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     val SHARED_PREFERENCES = "Shared"
-    val INTENT_STATE_CHANGE = 1000
-    val INTENT_START_TRAINING = 1001
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)

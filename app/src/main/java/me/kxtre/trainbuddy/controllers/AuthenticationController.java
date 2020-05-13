@@ -3,6 +3,7 @@ package me.kxtre.trainbuddy.controllers;
 import android.content.Context;
 import android.util.Pair;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -46,4 +47,27 @@ public class AuthenticationController {
         return headers;
     }
 
+    public static void login(@NotNull String username, @NotNull String password, @NotNull final Callback callback, Context context) {
+        List<Pair<String, String>> params = new LinkedList<>();
+        params.add(new Pair<>("email", username));
+        params.add(new Pair<>("password", password));
+        HttpUtils.Post(new HttpCallBack() {
+            @Override
+            public void onResult(JSONObject response) throws JSONException {
+                DataManager.INSTANCE.registerUser(response);
+                callback.onSucess();
+            }
+
+            @Override
+            public void onResult(String response) {
+                callback.onError();
+            }
+
+            @Override
+            public void onFail(String error) {
+
+            }
+        }, mainURL + "/api/login", params, context);
+
+    }
 }
