@@ -39,7 +39,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="0"
-            android:text="Login" />
+            android:text="Name" />
 
         <EditText
             android:id="@+id/editText_name"
@@ -99,14 +99,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="0"
-            android:text="Width" />
+            android:text="Weight" />
 
         <EditText
-            android:id="@+id/editText_width"
+            android:id="@+id/editText_weight"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:hint="Width"
+            android:hint="Weight"
             android:inputType="number" />
 
         <Space

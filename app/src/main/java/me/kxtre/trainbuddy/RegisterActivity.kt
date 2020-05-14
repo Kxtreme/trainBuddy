@@ -23,13 +23,13 @@ class RegisterActivity : AppCompatActivity() {
         val name = binding.editTextName.text.toString()
         val birth = binding.editTextBirthDay.text.toString()
         val height = binding.editTextHeight.text.toString().toInt()
-        val width = binding.editTextWidth.text.toString().toInt()
+        val weight = binding.editTextWeight.text.toString().toInt()
 
         if(password != pass_confirm) {
             Toast.makeText(applicationContext,"Passwords don't match", Toast.LENGTH_SHORT).show()
             return
         }
-        AuthenticationController.register(email, password, name, birth, height, width, object:
+        AuthenticationController.register(email, password, name, birth, height, weight, object:
             Callback {
             override fun onSucess() {
                 setResult(StateController.INTENT_STATE_CHANGE)

@@ -71,14 +71,14 @@ public class AuthenticationController {
 
     }
 
-    public static void register(@NotNull String email, @NotNull String password, @NotNull String name, @NotNull String birth, Integer height, Integer width, @NotNull final Callback callback, @NotNull Context context) {
+    public static void register(@NotNull String email, @NotNull String password, @NotNull String name, @NotNull String birth, Integer height, Integer weight, @NotNull final Callback callback, @NotNull Context context) {
         List<Pair<String, String>> params = new LinkedList<>();
         params.add(new Pair<>("email", email));
         params.add(new Pair<>("password", password));
         params.add(new Pair<>("name", name));
         params.add(new Pair<>("birth", birth));
         params.add(new Pair<>("height", height.toString()));
-        params.add(new Pair<>("width", width.toString()));
+        params.add(new Pair<>("weight", weight.toString()));
         HttpUtils.Post(new HttpCallBack() {
             @Override
             public void onResult(JSONObject response) throws JSONException {
