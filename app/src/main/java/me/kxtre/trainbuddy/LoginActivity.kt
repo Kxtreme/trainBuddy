@@ -22,7 +22,6 @@ class LoginActivity : AppCompatActivity() {
             override fun onSucess() {
                 setResult(INTENT_STATE_CHANGE)
                 finish()
-                TODO("Not yet implemented")
             }
 
             override fun onError() {
