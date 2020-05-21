@@ -3,6 +3,10 @@ package me.kxtre.trainbuddy
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -14,9 +18,24 @@ import me.kxtre.trainbuddy.controllers.StateController.INTENT_STATE_CHANGE
 import me.kxtre.trainbuddy.databinding.ActivityMainBinding
 import me.kxtre.trainbuddy.interfaces.Callback
 import me.kxtre.trainbuddy.models.State
+import me.kxtre.trainbuddy.models.Training
 
-class MainActivity : AppCompatActivity() {
+interface SensorListener {
+    fun onChange(x: Float, y: Float, z: Float)
+}
+class MainActivity : AppCompatActivity(), SensorEventListener {
     private lateinit var binding: ActivityMainBinding
+    private lateinit var mSensorManager: SensorManager
+    private var lastAcelerometerX = 0f;
+    private var lastAcelerometerY = 0f;
+    private var lastAcelerometerZ = 0f;
+    private var mSensor: Sensor? = null
+    private var listener: SensorListener = object: SensorListener {
+        override fun onChange(x: Float, y: Float, z: Float) {
+        }
+
+    }
+
     val SHARED_PREFERENCES = "Shared"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,8 +53,8 @@ class MainActivity : AppCompatActivity() {
             State.GUEST -> guestButtonLongClick(_button)
             State.LOGGED -> loggedButtonLongClick(_button)
         } }
-
-
+        mSensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
+        mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
     }
 
     private fun evaluateLoginStatus() {
@@ -106,6 +125,18 @@ class MainActivity : AppCompatActivity() {
         executeTraining(button, training)
     }
 
+    private fun executeTraining(button: View, training: Training) {
+        listener = object : SensorListener {
+            override fun onChange(x: Float, y: Float, z: Float) {
+                var diferenceX = lastAcelerometerX - x;
+                var diferenceY = lastAcelerometerY - y;
+                var diferenceZ = lastAcelerometerZ - z;
+            }
+
+        }
+
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if(resultCode !=  Activity.RESULT_OK) {
@@ -121,10 +152,23 @@ class MainActivity : AppCompatActivity() {
                 return
             }
             try {
-                executeTraining(Controller.findByIdInAvailableTrainings(trainingID))
+                executeTraining(findViewById(R.id.button_main), Controller.findByIdInAvailableTrainings(trainingID))
             } catch (e: Error) {
                 Toast.makeText(this, R.string.training_not_available, Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    override fun onAccuracyChanged(p0: Sensor?, p1: Int) {
+    }
+
+    override fun onSensorChanged(event: SensorEvent?) {
+        val x = event?.values?.get(0)!!
+        val y = event.values?.get(1)!!
+        val z = event.values?.get(2)!!
+        listener.onChange(x, y, z)
+        lastAcelerometerX = x
+        lastAcelerometerY = y
+        lastAcelerometerZ = z
     }
 }
