@@ -16,7 +16,7 @@ import me.kxtre.trainbuddy.utils.HttpUtils;
 
 public class AuthenticationController {
     public static String mainURL = "trainbuddy.vascocarreira.com";
-    public static void checkAuthentication(Context context, final Callback callback) {
+    public static void checkAuthentication(final Context context, final Callback callback) {
         List<Pair<String, String>> headers= generateAuthenticationHeaders(DataManager.INSTANCE.getStoredUserJWT());
         HttpUtils.Get(new HttpCallBack() {
             @Override
@@ -24,7 +24,7 @@ public class AuthenticationController {
                 String user = response.getString("user");
 
                 DataManager.INSTANCE.registerUser(response);
-                callback.onSucess();
+                Controller.INSTANCE.fetchTrainings(context, callback);
             }
 
             @Override
@@ -35,11 +35,12 @@ public class AuthenticationController {
             @Override
             public void onFail(String error) {
 
+                callback.onError();
             }
         }, mainURL + "/api/user",context,  true, headers);
     }
 
-    private static List<Pair<String, String>> generateAuthenticationHeaders(String token) {
+    public static List<Pair<String, String>> generateAuthenticationHeaders(String token) {
         List<Pair<String, String>> headers = new LinkedList<>();
         headers.add(new Pair<>("Authorization", "Bearer " + token));
         headers.add(new Pair<>("Accept", "application/json"));
