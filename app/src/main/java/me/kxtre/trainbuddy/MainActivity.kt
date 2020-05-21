@@ -15,8 +15,11 @@ import androidx.databinding.DataBindingUtil
 import me.kxtre.trainbuddy.controllers.*
 import me.kxtre.trainbuddy.controllers.StateController.INTENT_START_TRAINING
 import me.kxtre.trainbuddy.controllers.StateController.INTENT_STATE_CHANGE
+import me.kxtre.trainbuddy.controllers.StateController.training
 import me.kxtre.trainbuddy.databinding.ActivityMainBinding
+import me.kxtre.trainbuddy.interfaces.BasicCallBack
 import me.kxtre.trainbuddy.interfaces.Callback
+import me.kxtre.trainbuddy.models.Exercise
 import me.kxtre.trainbuddy.models.State
 import me.kxtre.trainbuddy.models.Training
 
@@ -26,9 +29,6 @@ interface SensorListener {
 class MainActivity : AppCompatActivity(), SensorEventListener {
     private lateinit var binding: ActivityMainBinding
     private lateinit var mSensorManager: SensorManager
-    private var lastAcelerometerX = 0f;
-    private var lastAcelerometerY = 0f;
-    private var lastAcelerometerZ = 0f;
     private var mSensor: Sensor? = null
     private var listener: SensorListener = object: SensorListener {
         override fun onChange(x: Float, y: Float, z: Float) {
@@ -126,15 +126,51 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     }
 
     private fun executeTraining(button: View, training: Training) {
+        StateController.training = training
+        executeNextExercise()
+    }
+
+    private fun executeNextExercise() {
+        val exercises = StateController.training?.exercises
+        if (exercises?.size == 0 || exercises?.indexOf(StateController.exercise) == exercises?.size?.minus(
+                1
+            )
+        ) {
+            notifyTrainingComplete()
+        }
+        if (StateController.exercise == null) {
+            executeExercise(exercises?.get(0))
+            return
+        }
+        executeExercise(exercises?.get(exercises.indexOf(StateController.exercise).plus(1)))
+    }
+
+    private fun executeExercise(exercise: Exercise?) {
+        if(exercise == null) {
+            return
+        }
+        //TODO("add to screen list")
+        StateController.exercise = exercise
+        exercise.registerCountMechanism(object : BasicCallBack {
+            override fun onEvent() {
+                if(exercise.progress != exercise.repeats) {
+                    incrementExerciseCounter()
+                    return
+                }
+                exercise.registerCountMechanism(null);
+                executeNextExercise()
+            }
+        })
         listener = object : SensorListener {
             override fun onChange(x: Float, y: Float, z: Float) {
-                var diferenceX = lastAcelerometerX - x;
-                var diferenceY = lastAcelerometerY - y;
-                var diferenceZ = lastAcelerometerZ - z;
+                exercise.notifyAccelerometerChange(x, y, z)
             }
-
         }
 
+    }
+
+    private fun incrementExerciseCounter() {
+        TODO("increment on the latest on the list")
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -167,8 +203,8 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         val y = event.values?.get(1)!!
         val z = event.values?.get(2)!!
         listener.onChange(x, y, z)
-        lastAcelerometerX = x
-        lastAcelerometerY = y
-        lastAcelerometerZ = z
+    }
+    private fun notifyTrainingComplete() {
+        Toast.makeText(this, "Training", Toast.LENGTH_SHORT).show()
     }
 }

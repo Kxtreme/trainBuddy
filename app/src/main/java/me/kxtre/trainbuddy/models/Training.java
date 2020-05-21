@@ -8,6 +8,8 @@ import org.json.JSONObject;
 import java.util.LinkedList;
 import java.util.List;
 
+import me.kxtre.trainbuddy.interfaces.BasicCallBack;
+
 public class Training {
     private Integer ID;
     private String name;
@@ -21,6 +23,14 @@ public class Training {
 
     public Integer getID() {
         return ID;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public List<Exercise> getExercises() {
+        return exercises;
     }
 
     @NotNull

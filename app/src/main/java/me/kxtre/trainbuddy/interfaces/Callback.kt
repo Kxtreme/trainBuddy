@@ -4,3 +4,6 @@ interface Callback {
     fun onSucess()
     fun onError()
 }
+interface BasicCallBack {
+    fun onEvent()
+}

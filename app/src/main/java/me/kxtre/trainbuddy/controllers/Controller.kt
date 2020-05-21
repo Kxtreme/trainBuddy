@@ -22,8 +22,7 @@ object Controller {
         HttpUtils.Get(object : HttpCallBack {
             @Throws(JSONException::class)
             override fun onResult(response: JSONObject) {
-                availableTrainings = Training.parseResponse(response)
-
+                availableTrainings = Training.parseResponse(response).toList()
                 callback.onSucess()
             }
 
@@ -37,5 +36,5 @@ object Controller {
         }, AuthenticationController.mainURL + "/api/trainings", context, true, headers)
     }
 
-    var availableTrainings = LinkedList<Training>()
+    var availableTrainings = emptyList<Training>()
 }
