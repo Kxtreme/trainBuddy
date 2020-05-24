@@ -66,7 +66,7 @@ public abstract class Exercise {
     private static Exercise parse(JSONObject o) throws Exception {
         if(o.getString("type").equals("pushUp")) {
             return new ExercisePushup(o.getInt("id"), o.getString("name"),
-                    o.getJSONObject("pivot").getInt("repeat")
+                    o.getJSONObject("pivot").getInt("quantity")
             );
         }
         throw new Exception("not known exercise");

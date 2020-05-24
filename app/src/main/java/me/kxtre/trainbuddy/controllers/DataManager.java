@@ -12,13 +12,15 @@ public enum DataManager {
 
     private SharedPreferences sharedPreferences;
     private User user;
+    public String mainURL = "http://trainbuddy.vascocarreira.com";
     public String getStoredUserJWT() {
         return this.sharedPreferences.getString("access_token", null);
     }
 
     public void registerUser(JSONObject response) throws JSONException {
-        String user = response.getString("user");
-        this.user = User.parseUser(user);
+        try {
+            this.user = User.parseUser(response.toString());
+        }catch (JSONException ex) {}
         try {
             SharedPreferences.Editor editSharedPreferences = sharedPreferences.edit();
             editSharedPreferences.putString("access_token", response.getString("access_token"));

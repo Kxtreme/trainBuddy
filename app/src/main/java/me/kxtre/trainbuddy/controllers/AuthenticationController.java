@@ -15,13 +15,11 @@ import me.kxtre.trainbuddy.utils.HttpCallBack;
 import me.kxtre.trainbuddy.utils.HttpUtils;
 
 public class AuthenticationController {
-    public static String mainURL = "trainbuddy.vascocarreira.com";
     public static void checkAuthentication(final Context context, final Callback callback) {
         List<Pair<String, String>> headers= generateAuthenticationHeaders(DataManager.INSTANCE.getStoredUserJWT());
         HttpUtils.Get(new HttpCallBack() {
             @Override
             public void onResult(JSONObject response) throws JSONException {
-                String user = response.getString("user");
 
                 DataManager.INSTANCE.registerUser(response);
                 Controller.INSTANCE.fetchTrainings(context, callback);
@@ -37,18 +35,18 @@ public class AuthenticationController {
 
                 callback.onError();
             }
-        }, mainURL + "/api/user",context,  true, headers);
+        }, DataManager.INSTANCE.mainURL + "/api/user",context,  true, headers);
     }
 
     public static List<Pair<String, String>> generateAuthenticationHeaders(String token) {
         List<Pair<String, String>> headers = new LinkedList<>();
         headers.add(new Pair<>("Authorization", "Bearer " + token));
-        headers.add(new Pair<>("Accept", "application/json"));
-        headers.add(new Pair<>("Content-Type", "application/json"));
+        //headers.add(new Pair<>("Accept", "application/json"));
+        //headers.add(new Pair<>("Content-Type", "application/json"));
         return headers;
     }
 
-    public static void login(@NotNull String username, @NotNull String password, @NotNull final Callback callback, Context context) {
+    public static void login(@NotNull String username, @NotNull String password, @NotNull final Callback callback, final Context context) {
         List<Pair<String, String>> params = new LinkedList<>();
         params.add(new Pair<>("email", username));
         params.add(new Pair<>("password", password));
@@ -56,23 +54,23 @@ public class AuthenticationController {
             @Override
             public void onResult(JSONObject response) throws JSONException {
                 DataManager.INSTANCE.registerUser(response);
-                callback.onSucess();
+                checkAuthentication(context, callback);
             }
 
             @Override
             public void onResult(String response) {
-                callback.onError();
+
             }
 
             @Override
             public void onFail(String error) {
-
+                callback.onError();
             }
-        }, mainURL + "/api/login", params, context);
+        }, DataManager.INSTANCE.mainURL + "/api/login", params, context);
 
     }
 
-    public static void register(@NotNull String email, @NotNull String password, @NotNull String name, @NotNull String birth, Integer height, Integer weight, String gender, @NotNull final Callback callback, @NotNull Context context) {
+    public static void register(@NotNull String email, @NotNull String password, @NotNull String name, @NotNull String birth, Integer height, Integer weight, String gender, @NotNull final Callback callback, @NotNull final Context context) {
         List<Pair<String, String>> params = new LinkedList<>();
         params.add(new Pair<>("email", email));
         params.add(new Pair<>("password", password));
@@ -85,7 +83,7 @@ public class AuthenticationController {
             @Override
             public void onResult(JSONObject response) throws JSONException {
                 DataManager.INSTANCE.registerUser(response);
-                callback.onSucess();
+                checkAuthentication(context, callback);
             }
 
             @Override
@@ -97,6 +95,6 @@ public class AuthenticationController {
             public void onFail(String error) {
 
             }
-        }, mainURL + "/api/login", params, context);
+        }, DataManager.INSTANCE.mainURL + "/api/login", params, context);
     }
 }

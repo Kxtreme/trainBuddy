@@ -33,7 +33,7 @@ object Controller {
             override fun onFail(error: String) {
                 callback.onError()
             }
-        }, AuthenticationController.mainURL + "/api/trainings", context, true, headers)
+        }, DataManager.INSTANCE.mainURL + "/api/trainings", context, true, headers)
     }
 
     var availableTrainings = emptyList<Training>()

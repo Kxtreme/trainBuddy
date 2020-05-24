@@ -62,7 +62,21 @@ public class HttpUtils {
                             Log.d("Error.Response", error.getMessage() != null ? error.getMessage() : "no message");
                         }
                     }
-            );
+            ) {
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    if (headers == null) {
+                        return super.getHeaders();
+                    }
+
+                    Map<String, String> params = new HashMap<>();
+                    for (Pair<String, String> header : headers) {
+                        params.put(header.first, header.second);
+                    }
+
+                    return params;
+                }
+            };
         } else {
             getRequest = new StringRequest(Request.Method.GET, url,
                     new Response.Listener<String>() {
