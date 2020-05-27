@@ -12,10 +12,10 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import me.kxtre.trainbuddy.adapters.ExercisesAdapter
 import me.kxtre.trainbuddy.controllers.*
 import me.kxtre.trainbuddy.controllers.StateController.INTENT_START_TRAINING
 import me.kxtre.trainbuddy.controllers.StateController.INTENT_STATE_CHANGE
-import me.kxtre.trainbuddy.controllers.StateController.training
 import me.kxtre.trainbuddy.databinding.ActivityMainBinding
 import me.kxtre.trainbuddy.interfaces.BasicCallBack
 import me.kxtre.trainbuddy.interfaces.Callback
@@ -122,6 +122,10 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     private fun loggedButtonClick(button: View) {
         val trainings = Controller.availableTrainings
         val training = ContextEngine.decideBestTraining(trainings)
+        if(training == null) {
+            Toast.makeText(this, R.string.training_not_available, Toast.LENGTH_SHORT).show()
+            return
+        }
         executeTraining(button, training)
     }
 
@@ -151,9 +155,10 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         }
         //TODO("add to screen list")
         StateController.exercise = exercise
+        redrawExerciseList()
         exercise.registerCountMechanism(object : BasicCallBack {
             override fun onEvent() {
-                if(exercise.progress != exercise.repeats) {
+                if(!exercise.isDone) {
                     incrementExerciseCounter()
                     return
                 }
@@ -170,7 +175,16 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     }
 
     private fun incrementExerciseCounter() {
-        TODO("increment on the latest on the list")
+        redrawExerciseList()
+    }
+
+    private fun redrawExerciseList() {
+        val exercisesAdapter = ExercisesAdapter(
+            this,
+            R.layout.list_item_exercise,
+            StateController.exercisesHistory
+        )
+        binding.listExercises.adapter = exercisesAdapter
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

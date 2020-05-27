@@ -9,6 +9,13 @@ object StateController {
     val INTENT_START_TRAINING = 1001
     var training: Training? = null
     var exercise: Exercise? = null
+        set(value) {
+            field = value
+            if (value != null) {
+                exercisesHistory.add(0, value)
+            }
+        }
+    val exercisesHistory = mutableListOf<Exercise>()
     fun changeState(state: State) {
         this.state = state
     }

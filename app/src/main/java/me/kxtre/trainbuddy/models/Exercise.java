@@ -14,7 +14,7 @@ import me.kxtre.trainbuddy.interfaces.BasicCallBack;
 public abstract class Exercise {
     private Integer ID;
     private String name;
-    private String logic;
+    private Integer percentage;
     private Integer repeats;
     private Integer progress;
 
@@ -23,6 +23,7 @@ public abstract class Exercise {
         this.name = name;
         this.repeats = repeats;
         this.progress = 0;
+        percentage = 100;
     }
 
     public Integer getID() {
@@ -33,8 +34,16 @@ public abstract class Exercise {
         return name;
     }
 
-    public String getLogic() {
-        return logic;
+    public Integer getPercentage() {
+        return percentage;
+    }
+
+    public Boolean isDone() {
+        return this.progress <= total();
+    }
+
+    public Integer total() {
+        return Math.round((this.repeats *this.percentage.floatValue()/100));
     }
 
     public Integer getRepeats() {
@@ -64,7 +73,7 @@ public abstract class Exercise {
     }
 
     private static Exercise parse(JSONObject o) throws Exception {
-        if(o.getString("type").equals("pushUp")) {
+        if(o.getString("type").equals("push_up")) {
             return new ExercisePushup(o.getInt("id"), o.getString("name"),
                     o.getJSONObject("pivot").getInt("quantity")
             );
