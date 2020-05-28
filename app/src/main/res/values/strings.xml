@@ -7,4 +7,11 @@
     <string name="training_not_available">Training is still not available to you</string>
     <string name="progress">Progress:</string>
     <string name="total">Total:</string>
+    <string name="exercises_not_available">No Exercises available</string>
+    <string name="trainings">Trainings</string>
+    <string name="sensor_capturing">Sensor capturing</string>
+    <string name="button_start">Start</string>
+    <string name="button_share">Share</string>
+    <string name="button_stop">Stop</string>
+    <string name="share_subject">Sensors data</string>
 </resources>

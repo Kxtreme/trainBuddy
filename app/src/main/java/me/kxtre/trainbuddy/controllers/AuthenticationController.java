@@ -41,8 +41,6 @@ public class AuthenticationController {
     public static List<Pair<String, String>> generateAuthenticationHeaders(String token) {
         List<Pair<String, String>> headers = new LinkedList<>();
         headers.add(new Pair<>("Authorization", "Bearer " + token));
-        //headers.add(new Pair<>("Accept", "application/json"));
-        //headers.add(new Pair<>("Content-Type", "application/json"));
         return headers;
     }
 

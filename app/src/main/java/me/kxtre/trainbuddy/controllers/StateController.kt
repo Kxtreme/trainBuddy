@@ -16,6 +16,7 @@ object StateController {
             }
         }
     val exercisesHistory = mutableListOf<Exercise>()
+    var isRecording = false;
     fun changeState(state: State) {
         this.state = state
     }

@@ -27,7 +27,6 @@ public enum DataManager {
             editSharedPreferences.putString("refresh_token", response.getString("access_token"));
             editSharedPreferences.apply();
         } catch (JSONException e) {
-            e.printStackTrace();
         }
     }
 

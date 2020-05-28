@@ -26,6 +26,7 @@ import me.kxtre.trainbuddy.models.Training
 interface SensorListener {
     fun onChange(x: Float, y: Float, z: Float)
 }
+
 class MainActivity : AppCompatActivity(), SensorEventListener {
     private lateinit var binding: ActivityMainBinding
     private lateinit var mSensorManager: SensorManager
@@ -57,6 +58,17 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
     }
 
+    override fun onResume() {
+        super.onResume()
+        mSensorManager.registerListener(this, mSensor,
+            SensorManager.SENSOR_DELAY_NORMAL)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        mSensorManager.unregisterListener(this)
+    }
+
     private fun evaluateLoginStatus() {
         val button = binding.buttonMain
         AuthenticationController.checkAuthentication(this, object : Callback {
@@ -79,7 +91,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     }
 
     private fun goToMoreOptionsView(mainActivity: MainActivity) {
-        val intent = Intent(this, RegisterActivity::class.java)
+        val intent = Intent(this, OptionsActivity::class.java)
         startActivityForResult(intent, INTENT_START_TRAINING)
     }
 
@@ -143,6 +155,10 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
             notifyTrainingComplete()
         }
         if (StateController.exercise == null) {
+            if(exercises?.size == 0) {
+                Toast.makeText(applicationContext, R.string.exercises_not_available, Toast.LENGTH_LONG).show()
+                return
+            }
             executeExercise(exercises?.get(0))
             return
         }
@@ -153,7 +169,6 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         if(exercise == null) {
             return
         }
-        //TODO("add to screen list")
         StateController.exercise = exercise
         redrawExerciseList()
         exercise.registerCountMechanism(object : BasicCallBack {
@@ -168,6 +183,9 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         })
         listener = object : SensorListener {
             override fun onChange(x: Float, y: Float, z: Float) {
+                binding.textViewX.text = x.toString()
+                binding.textViewY.text = y.toString()
+                binding.textViewZ.text = z.toString()
                 exercise.notifyAccelerometerChange(x, y, z)
             }
         }
