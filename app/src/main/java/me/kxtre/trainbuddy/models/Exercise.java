@@ -44,8 +44,8 @@ public abstract class Exercise {
         return Math.round((this.repeats *this.percentage.floatValue()/100));
     }
 
-    public Integer getRepeats() {
-        return repeats;
+    public void addToPercentage(Integer n) {
+        this.percentage+=n;
     }
 
     public Integer getProgress() {
@@ -58,7 +58,7 @@ public abstract class Exercise {
     public abstract void registerCountMechanism(BasicCallBack callBack);
     public abstract void notifyAccelerometerChange(Float x, Float y, Float z);
 
-    public static List<Exercise> parseArray(JSONArray array) throws JSONException {
+    public static List<Exercise> parseArray(JSONArray array) {
         List<Exercise> exercises = new LinkedList<>();
         for (int i = 0; i < array.length(); i++) {
             try {
