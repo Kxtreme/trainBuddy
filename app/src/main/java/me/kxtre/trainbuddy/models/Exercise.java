@@ -71,11 +71,17 @@ public abstract class Exercise {
     }
 
     private static Exercise parse(JSONObject o) throws Exception {
-        if(o.getString("type").equals("push_up")) {
-            return new ExercisePushUp(o.getInt("id"), o.getString("name"),
-                    o.getJSONObject("pivot").getInt("quantity")
-            );
+        switch (o.getString("type")) {
+            case "push_up":
+                return new ExercisePushUp(o.getInt("id"), o.getString("name"),
+                        o.getJSONObject("pivot").getInt("quantity")
+                );
+            case "abdominal":
+                return new ExerciseAbdominal(o.getInt("id"), o.getString("name"),
+                        o.getJSONObject("pivot").getInt("quantity")
+                );
+            default:
+                throw new Exception("not known exercise");
         }
-        throw new Exception("not known exercise");
     }
 }

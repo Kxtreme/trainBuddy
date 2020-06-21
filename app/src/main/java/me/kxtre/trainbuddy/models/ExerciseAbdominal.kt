@@ -2,7 +2,7 @@ package me.kxtre.trainbuddy.models
 
 import me.kxtre.trainbuddy.interfaces.BasicCallBack
 
-class ExercisePushUp(ID: Int?, name: String?, repeats: Int?) :
+class ExerciseAbdominal(ID: Int?, name: String?, repeats: Int?) :
     Exercise(ID, name, repeats) {
     private var countCallBack: BasicCallBack? = null
     private var isUp: Boolean? = null
@@ -29,13 +29,13 @@ class ExercisePushUp(ID: Int?, name: String?, repeats: Int?) :
     }
 
     private fun checkUp(x: Float, y: Float, z: Float) {
-        if(x > 5 && y > 5) {
+        if(y > 5) {
             isUp = true
             addToProgress()
         }
     }
     private fun checkDown(x: Float, y: Float, z: Float) {
-        if(z < -10) isUp = false
+        if(z < -5) isUp = false
     }
 
     private fun addToProgress() {
