@@ -31,10 +31,8 @@ class RecordActivity : AppCompatActivity(), SensorEventListener {
 
     private fun shareResults() {
         val intent = Intent(Intent.ACTION_SEND)
-        val shareBody = "Here is the share content body"
         intent.type = "text/plain"
-        /*Applying information Subject and Body.*/
-        /*Applying information Subject and Body.*/intent.putExtra(
+        intent.putExtra(
             Intent.EXTRA_SUBJECT,
             getString(R.string.share_subject)
         )

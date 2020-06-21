@@ -1,7 +1,5 @@
 package me.kxtre.trainbuddy.models;
 
-import android.media.Image;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -74,7 +72,7 @@ public abstract class Exercise {
 
     private static Exercise parse(JSONObject o) throws Exception {
         if(o.getString("type").equals("push_up")) {
-            return new ExercisePushup(o.getInt("id"), o.getString("name"),
+            return new ExercisePushUp(o.getInt("id"), o.getString("name"),
                     o.getJSONObject("pivot").getInt("quantity")
             );
         }
