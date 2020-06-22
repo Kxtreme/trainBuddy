@@ -1,17 +1,22 @@
 package me.kxtre.trainbuddy
 
 import android.app.Activity
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import android.opengl.Visibility
 import android.os.Bundle
+import android.speech.RecognizerIntent
 import android.view.View
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import kotlinx.android.synthetic.main.activity_main.*
 import me.kxtre.trainbuddy.adapters.ExercisesAdapter
 import me.kxtre.trainbuddy.controllers.*
 import me.kxtre.trainbuddy.controllers.StateController.INTENT_START_TRAINING
@@ -22,6 +27,7 @@ import me.kxtre.trainbuddy.interfaces.Callback
 import me.kxtre.trainbuddy.models.Exercise
 import me.kxtre.trainbuddy.models.State
 import me.kxtre.trainbuddy.models.Training
+import java.util.*
 
 interface SensorListener {
     fun onChange(x: Float, y: Float, z: Float)
@@ -38,6 +44,8 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     }
 
     val SHARED_PREFERENCES = "Shared"
+    private val REQ_CODE = 100
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
@@ -56,6 +64,26 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         } }
         mSensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
         mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+
+        val speak = findViewById<ImageView>(R.id.button_secondary_speak)
+        speak.setOnClickListener {
+            val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
+            intent.putExtra(
+                RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
+            )
+            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
+            intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Need to speak")
+            try {
+                startActivityForResult(intent, REQ_CODE)
+            } catch (a: ActivityNotFoundException) {
+                Toast.makeText(
+                    applicationContext,
+                    "Sorry your device not supported",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
     }
 
     override fun onResume() {
@@ -76,6 +104,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
             override fun onSucess() {
                 StateController.changeState(State.LOGGED)
                 button.text = getString(R.string.start_training_more_options)
+                button_secondary_speak.visibility = View.VISIBLE
             }
 
             override fun onError() {
@@ -223,6 +252,14 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
                 executeTraining(findViewById(R.id.button_main), Controller.findByIdInAvailableTrainings(trainingID))
             } catch (e: Error) {
                 Toast.makeText(this, R.string.training_not_available, Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        if(requestCode == REQ_CODE) {
+            if (resultCode == Activity.RESULT_OK && null != data) {
+                val result: ArrayList<*> = data
+                    .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
+                Toast.makeText(this, result[0] as String, Toast.LENGTH_SHORT).show() //-> result[0] convert text from speech
             }
         }
     }
