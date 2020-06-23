@@ -40,6 +40,6 @@ class ExerciseAbdominal(ID: Int?, name: String?, repeats: Int?) :
 
     private fun addToProgress() {
         this.addToProgress(1)
-        countCallBack!!.onEvent()
+        countCallBack?.onEvent()
     }
 }

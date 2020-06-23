@@ -20,5 +20,13 @@ object StateController {
     fun changeState(state: State) {
         this.state = state
     }
+
+    fun cleanTraining() {
+        exercisesHistory.clear()
+        training?.exercises?.forEach {
+            it.reset()
+        }
+    }
+
     var state = State.Initial
 }

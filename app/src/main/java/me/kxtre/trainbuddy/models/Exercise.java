@@ -37,7 +37,7 @@ public abstract class Exercise {
     }
 
     public Boolean isDone() {
-        return this.progress <= total();
+        return this.progress >= total();
     }
 
     public Integer total() {
@@ -83,5 +83,10 @@ public abstract class Exercise {
             default:
                 throw new Exception("not known exercise");
         }
+    }
+
+    public void reset() {
+        this.progress = 0;
+        this.percentage = 100;
     }
 }

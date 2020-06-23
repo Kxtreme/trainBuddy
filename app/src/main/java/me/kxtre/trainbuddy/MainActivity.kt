@@ -132,6 +132,9 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     }
 
     private fun loggedButtonClick(button: View) {
+        StateController.cleanTraining()
+        StateController.exercise = null
+        StateController.training = null
         val trainings = Controller.availableTrainings
         val training = ContextEngine.decideBestTraining(trainings)
         if(training == null) {
@@ -162,7 +165,13 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
             executeExercise(exercises?.get(0))
             return
         }
-        executeExercise(exercises?.get(exercises.indexOf(StateController.exercise).plus(1)))
+        val index = exercises?.indexOf(StateController.exercise)?.plus(1)
+        if (index != null && index >= exercises.size) {
+            Toast.makeText(applicationContext, getString(R.string.training_done), Toast.LENGTH_LONG).show()
+            redrawExerciseList()
+            return
+        }
+        executeExercise(index?.let { exercises[it] })
     }
 
     private fun executeExercise(exercise: Exercise?) {
@@ -177,7 +186,11 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
                     incrementExerciseCounter()
                     return
                 }
-                exercise.registerCountMechanism(null);
+                exercise.registerCountMechanism(object: BasicCallBack{
+                    override fun onEvent() {
+                    }
+
+                });
                 executeNextExercise()
             }
         })
