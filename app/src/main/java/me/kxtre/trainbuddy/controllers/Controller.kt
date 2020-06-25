@@ -36,5 +36,9 @@ object Controller {
         }, DataManager.INSTANCE.mainURL + "/api/trainings", context, true, headers)
     }
 
+    fun cleanTrainings() {
+        availableTrainings.forEach { it.exercises.forEach { it.reset() } }
+    }
+
     var availableTrainings = emptyList<Training>()
 }

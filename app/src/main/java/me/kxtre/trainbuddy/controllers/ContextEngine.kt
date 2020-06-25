@@ -11,6 +11,7 @@ object ContextEngine {
     }
 
     fun sendInstructions(action: String?) {
+        Log.d("actions", action)
         parseStringToWords(action).forEach { tryRealizeAction(it) }
     }
 
@@ -26,6 +27,9 @@ object ContextEngine {
     val actions:Map<String, () -> Unit?> = mapOf(
         Pair("easy", {
             StateController.exercise?.addToPercentage(10)
+        }),
+        Pair("hard", {
+            StateController.exercise?.addToPercentage(-10)
         })
     )
 }

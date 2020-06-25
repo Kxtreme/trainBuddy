@@ -24,9 +24,7 @@ object StateController {
 
     fun cleanTraining() {
         exercisesHistory.clear()
-        training?.exercises?.forEach {
-            it.reset()
-        }
+        Controller.cleanTrainings()
     }
 
     var state = State.Initial

@@ -1,5 +1,6 @@
 package me.kxtre.trainbuddy
 
+import android.app.Activity
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -20,7 +21,7 @@ class LoginActivity : AppCompatActivity() {
     fun onLoginClick(v: View) {
         AuthenticationController.login(binding.editTextLogin.text.toString(), binding.editTextPassword.text.toString(), object: Callback {
             override fun onSucess() {
-                setResult(INTENT_STATE_CHANGE)
+                setResult(Activity.RESULT_OK)
                 finish()
             }
 

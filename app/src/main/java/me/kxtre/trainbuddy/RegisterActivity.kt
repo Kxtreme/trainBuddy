@@ -1,5 +1,6 @@
 package me.kxtre.trainbuddy
 
+import android.app.Activity
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -36,7 +37,7 @@ class RegisterActivity : AppCompatActivity() {
         AuthenticationController.register(email, password, name, birth, height, weight, gender, object:
             Callback {
             override fun onSucess() {
-                setResult(StateController.INTENT_STATE_CHANGE)
+                setResult(Activity.RESULT_OK)
                 finish()
             }
 

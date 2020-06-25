@@ -59,7 +59,6 @@ class MainActivity : AppCompatActivity(), SensorEventListener, RecognitionListen
 
     private val PERMISSIONS_REQUEST_RECORD_AUDIO = 1
     val SHARED_PREFERENCES = "Shared"
-    private val REQ_CODE = 100
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -103,17 +102,9 @@ class MainActivity : AppCompatActivity(), SensorEventListener, RecognitionListen
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        mSensorManager.registerListener(
-            this, mSensor,
-            SensorManager.SENSOR_DELAY_NORMAL
-        )
-    }
-
-    override fun onPause() {
-        super.onPause()
-        mSensorManager.unregisterListener(this)
+    override fun onDestroy() {
+        stopListeners()
+        super.onDestroy()
     }
 
     private fun evaluateLoginStatus() {
@@ -181,7 +172,6 @@ class MainActivity : AppCompatActivity(), SensorEventListener, RecognitionListen
     private fun loggedButtonClick(button: View) {
         StateController.cleanTraining()
         StateController.exercise = null
-        StateController.training = null
         val trainings = Controller.availableTrainings
         val training = ContextEngine.decideBestTraining(trainings)
         if (training == null) {
@@ -192,6 +182,9 @@ class MainActivity : AppCompatActivity(), SensorEventListener, RecognitionListen
     }
 
     private fun executeTraining(button: View, training: Training) {
+        if(StateController.training == null) {
+            startListeners()
+        }
         StateController.training = training
         executeNextExercise()
     }
@@ -218,12 +211,29 @@ class MainActivity : AppCompatActivity(), SensorEventListener, RecognitionListen
         }
         val index = exercises?.indexOf(StateController.exercise)?.plus(1)
         if (index != null && index >= exercises.size) {
+
+            //treino completo
             Toast.makeText(applicationContext, getString(R.string.training_done), Toast.LENGTH_LONG)
                 .show()
             redrawExerciseList()
+            stopListeners()
+            StateController.training = null
             return
         }
         executeExercise(index?.let { exercises[it] })
+    }
+
+    private fun startListeners() {
+        recognizeMicrophone()
+        mSensorManager.registerListener(
+            this, mSensor,
+            SensorManager.SENSOR_DELAY_NORMAL
+        )
+    }
+
+    private fun stopListeners() {
+        mSensorManager.unregisterListener(this)
+        stopRecognizeMicrophone()
     }
 
     private fun executeExercise(exercise: Exercise?) {
@@ -311,12 +321,6 @@ class MainActivity : AppCompatActivity(), SensorEventListener, RecognitionListen
     private class SetupTask internal constructor(activity: MainActivity) :
         AsyncTask<Void?, Void?, Exception?>() {
         var activityReference: WeakReference<MainActivity> = WeakReference(activity)
-
-        override fun onPostExecute(result: Exception?) {
-            if (result != null) return
-                activityReference.get()?.setUiState(STATE_READY)
-
-        }
             override fun doInBackground(vararg p0: Void?): Exception? {
                 try {
                     val assets = Assets(activityReference.get())
@@ -333,13 +337,6 @@ class MainActivity : AppCompatActivity(), SensorEventListener, RecognitionListen
 
     }
 
-        fun setUiState(state: Int) {
-            when (state) {
-                STATE_READY -> {
-                    recognizeMicrophone()
-                }
-            }
-        }
 
     private fun recognizeMicrophone() {
         if (recognizer != null) {
@@ -354,10 +351,19 @@ class MainActivity : AppCompatActivity(), SensorEventListener, RecognitionListen
         }
     }
 
+    private fun stopRecognizeMicrophone() {
+            try {
+                recognizer?.cancel()
+                recognizer = null
+
+            } catch (e: IOException) {}
+    }
+
     override fun onResult(p0: String?) {
         if(p0 == null) return
 
         ContextEngine.sendInstructions(JSONObject(p0).getString("text"))
+        redrawExerciseList()
     }
 
     override fun onPartialResult(p0: String?) {
@@ -365,9 +371,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener, RecognitionListen
     }
 
     override fun onTimeout() {
-        recognizer!!.cancel()
-        recognizer = null
-        setUiState(STATE_READY)
+        recognizeMicrophone()
     }
 
     override fun onError(p0: java.lang.Exception?) {
