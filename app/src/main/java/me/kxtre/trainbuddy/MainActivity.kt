@@ -11,15 +11,12 @@ import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.AsyncTask
 import android.os.Bundle
-import android.speech.RecognizerIntent
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
-import kotlinx.android.synthetic.main.activity_main.*
 import me.kxtre.trainbuddy.adapters.ExercisesAdapter
 import me.kxtre.trainbuddy.controllers.*
 import me.kxtre.trainbuddy.controllers.StateController.INTENT_START_TRAINING
@@ -36,7 +33,6 @@ import org.kaldi.*
 import java.io.File
 import java.io.IOException
 import java.lang.ref.WeakReference
-import java.util.*
 
 
 interface SensorListener {
@@ -258,7 +254,6 @@ class MainActivity : AppCompatActivity(), SensorEventListener, RecognitionListen
                 exercise.notifyAccelerometerChange(x, y, z)
             }
         }
-
     }
 
     private fun incrementExerciseCounter() {
@@ -362,7 +357,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener, RecognitionListen
     override fun onResult(p0: String?) {
         if(p0 == null) return
 
-        ContextEngine.realizeAction(JSONObject(p0).getString("text"))
+        ContextEngine.sendInstructions(JSONObject(p0).getString("text"))
     }
 
     override fun onPartialResult(p0: String?) {
