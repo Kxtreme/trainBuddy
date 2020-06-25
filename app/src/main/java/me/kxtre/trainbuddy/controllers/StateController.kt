@@ -5,6 +5,7 @@ import me.kxtre.trainbuddy.models.State
 import me.kxtre.trainbuddy.models.Training
 
 object StateController {
+    val STATE_READY = 1
     val INTENT_STATE_CHANGE = 1000
     val INTENT_START_TRAINING = 1001
     var training: Training? = null

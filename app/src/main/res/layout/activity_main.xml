@@ -40,14 +40,6 @@
             android:layout_height="match_parent"
             android:layout_weight="1" />
 
-        <ImageView
-            android:id="@+id/button_secondary_speak"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?selectableItemBackground"
-            android:src="@android:drawable/ic_btn_speak_now"
-            android:visibility="invisible"/>
-
         <Button
             android:id="@+id/button_main"
             android:layout_width="match_parent"

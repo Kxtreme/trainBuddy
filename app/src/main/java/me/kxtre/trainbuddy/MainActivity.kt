@@ -1,48 +1,67 @@
 package me.kxtre.trainbuddy
 
+import android.Manifest
 import android.app.Activity
-import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import android.opengl.Visibility
+import android.os.AsyncTask
 import android.os.Bundle
 import android.speech.RecognizerIntent
+import android.util.Log
 import android.view.View
-import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import kotlinx.android.synthetic.main.activity_main.*
 import me.kxtre.trainbuddy.adapters.ExercisesAdapter
 import me.kxtre.trainbuddy.controllers.*
 import me.kxtre.trainbuddy.controllers.StateController.INTENT_START_TRAINING
 import me.kxtre.trainbuddy.controllers.StateController.INTENT_STATE_CHANGE
+import me.kxtre.trainbuddy.controllers.StateController.STATE_READY
 import me.kxtre.trainbuddy.databinding.ActivityMainBinding
 import me.kxtre.trainbuddy.interfaces.BasicCallBack
 import me.kxtre.trainbuddy.interfaces.Callback
 import me.kxtre.trainbuddy.models.Exercise
 import me.kxtre.trainbuddy.models.State
 import me.kxtre.trainbuddy.models.Training
+import org.json.JSONObject
+import org.kaldi.*
+import java.io.File
+import java.io.IOException
+import java.lang.ref.WeakReference
 import java.util.*
+
 
 interface SensorListener {
     fun onChange(x: Float, y: Float, z: Float)
 }
 
-class MainActivity : AppCompatActivity(), SensorEventListener {
+class MainActivity : AppCompatActivity(), SensorEventListener, RecognitionListener {
+    init {
+       System.loadLibrary("kaldi_jni")
+    }
+
+
     private lateinit var binding: ActivityMainBinding
     private lateinit var mSensorManager: SensorManager
+    private var model: Model? = null
+    private var recognizer: SpeechRecognizer? = null
     private var mSensor: Sensor? = null
-    private var listener: SensorListener = object: SensorListener {
+    private var listener: SensorListener = object : SensorListener {
         override fun onChange(x: Float, y: Float, z: Float) {
         }
 
     }
 
+
+    private val PERMISSIONS_REQUEST_RECORD_AUDIO = 1
     val SHARED_PREFERENCES = "Shared"
     private val REQ_CODE = 100
 
@@ -57,39 +76,43 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         DataManager.INSTANCE.sharedPreferences = sharedPreferences
         evaluateLoginStatus()
 
-        button.setOnLongClickListener { _button -> when(StateController.state) {
-            State.Initial -> initialButtonLongClick(_button)
-            State.GUEST -> guestButtonLongClick(_button)
-            State.LOGGED -> loggedButtonLongClick(_button)
-        } }
+        button.setOnLongClickListener { _button ->
+            when (StateController.state) {
+                State.Initial -> initialButtonLongClick(_button)
+                State.GUEST -> guestButtonLongClick(_button)
+                State.LOGGED -> loggedButtonLongClick(_button)
+            }
+        }
         mSensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
         mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+        requestPermissions()
 
-        val speak = findViewById<ImageView>(R.id.button_secondary_speak)
-        speak.setOnClickListener {
-            val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
-            intent.putExtra(
-                RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
+        SetupTask(this).execute()
+    }
+
+    private fun requestPermissions() {
+
+        // Check if user has given permission to record audio
+        val permissionCheck = ContextCompat.checkSelfPermission(
+            applicationContext,
+            Manifest.permission.RECORD_AUDIO
+        )
+        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.RECORD_AUDIO),
+                PERMISSIONS_REQUEST_RECORD_AUDIO
             )
-            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
-            intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Need to speak")
-            try {
-                startActivityForResult(intent, REQ_CODE)
-            } catch (a: ActivityNotFoundException) {
-                Toast.makeText(
-                    applicationContext,
-                    "Sorry your device not supported",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
+            return
         }
     }
 
     override fun onResume() {
         super.onResume()
-        mSensorManager.registerListener(this, mSensor,
-            SensorManager.SENSOR_DELAY_NORMAL)
+        mSensorManager.registerListener(
+            this, mSensor,
+            SensorManager.SENSOR_DELAY_NORMAL
+        )
     }
 
     override fun onPause() {
@@ -104,7 +127,6 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
             override fun onSucess() {
                 StateController.changeState(State.LOGGED)
                 button.text = getString(R.string.start_training_more_options)
-                button_secondary_speak.visibility = View.VISIBLE
             }
 
             override fun onError() {
@@ -136,11 +158,11 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
     private fun initialButtonLongClick(button: View): Boolean {
         Toast.makeText(this, R.string.not_available, Toast.LENGTH_SHORT).show()
-        return  true
+        return true
     }
 
     fun mainButtonClick(button: View) {
-        when(StateController.state) {
+        when (StateController.state) {
             State.Initial -> initialButtonClick(button)
             State.GUEST -> guestButtonClick(button)
             State.LOGGED -> loggedButtonClick(button)
@@ -166,7 +188,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         StateController.training = null
         val trainings = Controller.availableTrainings
         val training = ContextEngine.decideBestTraining(trainings)
-        if(training == null) {
+        if (training == null) {
             Toast.makeText(this, R.string.training_not_available, Toast.LENGTH_SHORT).show()
             return
         }
@@ -187,8 +209,12 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
             notifyTrainingComplete()
         }
         if (StateController.exercise == null) {
-            if(exercises?.size == 0) {
-                Toast.makeText(applicationContext, R.string.exercises_not_available, Toast.LENGTH_LONG).show()
+            if (exercises?.size == 0) {
+                Toast.makeText(
+                    applicationContext,
+                    R.string.exercises_not_available,
+                    Toast.LENGTH_LONG
+                ).show()
                 return
             }
             executeExercise(exercises?.get(0))
@@ -196,7 +222,8 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         }
         val index = exercises?.indexOf(StateController.exercise)?.plus(1)
         if (index != null && index >= exercises.size) {
-            Toast.makeText(applicationContext, getString(R.string.training_done), Toast.LENGTH_LONG).show()
+            Toast.makeText(applicationContext, getString(R.string.training_done), Toast.LENGTH_LONG)
+                .show()
             redrawExerciseList()
             return
         }
@@ -204,18 +231,18 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     }
 
     private fun executeExercise(exercise: Exercise?) {
-        if(exercise == null) {
+        if (exercise == null) {
             return
         }
         StateController.exercise = exercise
         redrawExerciseList()
         exercise.registerCountMechanism(object : BasicCallBack {
             override fun onEvent() {
-                if(!exercise.isDone) {
+                if (!exercise.isDone) {
                     incrementExerciseCounter()
                     return
                 }
-                exercise.registerCountMechanism(object: BasicCallBack{
+                exercise.registerCountMechanism(object : BasicCallBack {
                     override fun onEvent() {
                     }
 
@@ -249,30 +276,25 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if(resultCode !=  Activity.RESULT_OK) {
+        if (resultCode != Activity.RESULT_OK) {
             return;
         }
-        if(requestCode == INTENT_STATE_CHANGE) {
+        if (requestCode == INTENT_STATE_CHANGE) {
             evaluateLoginStatus()
             return
         }
-        if(requestCode == INTENT_START_TRAINING) {
+        if (requestCode == INTENT_START_TRAINING) {
             val trainingID = data!!.getIntExtra("trainingID", 0)
-            if(trainingID == 0) {
+            if (trainingID == 0) {
                 return
             }
             try {
-                executeTraining(findViewById(R.id.button_main), Controller.findByIdInAvailableTrainings(trainingID))
+                executeTraining(
+                    findViewById(R.id.button_main),
+                    Controller.findByIdInAvailableTrainings(trainingID)
+                )
             } catch (e: Error) {
                 Toast.makeText(this, R.string.training_not_available, Toast.LENGTH_SHORT).show()
-            }
-        }
-
-        if(requestCode == REQ_CODE) {
-            if (resultCode == Activity.RESULT_OK && null != data) {
-                val result: ArrayList<*> = data
-                    .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
-                Toast.makeText(this, result[0] as String, Toast.LENGTH_SHORT).show() //-> result[0] convert text from speech
             }
         }
     }
@@ -286,7 +308,76 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         val z = event.values?.get(2)!!
         listener.onChange(x, y, z)
     }
+
     private fun notifyTrainingComplete() {
         Toast.makeText(this, "Training", Toast.LENGTH_SHORT).show()
     }
+
+    private class SetupTask internal constructor(activity: MainActivity) :
+        AsyncTask<Void?, Void?, Exception?>() {
+        var activityReference: WeakReference<MainActivity> = WeakReference(activity)
+
+        override fun onPostExecute(result: Exception?) {
+            if (result != null) return
+                activityReference.get()?.setUiState(STATE_READY)
+
+        }
+            override fun doInBackground(vararg p0: Void?): Exception? {
+                try {
+                    val assets = Assets(activityReference.get())
+                    val assetDir: File = assets.syncAssets()
+                    Vosk.SetLogLevel(0)
+                    activityReference.get()?.model = Model("$assetDir/model-android")
+
+                } catch (e: IOException) {
+                    return e
+                }
+                return null
+            }
+
+
+    }
+
+        fun setUiState(state: Int) {
+            when (state) {
+                STATE_READY -> {
+                    recognizeMicrophone()
+                }
+            }
+        }
+
+    private fun recognizeMicrophone() {
+        if (recognizer != null) {
+            recognizer!!.cancel()
+            recognizer = null
+        } else {
+            try {
+                recognizer = SpeechRecognizer(model)
+                recognizer!!.addListener(this)
+                recognizer!!.startListening()
+            } catch (e: IOException) {}
+        }
+    }
+
+    override fun onResult(p0: String?) {
+        if(p0 == null) return
+
+        ContextEngine.realizeAction(JSONObject(p0).getString("text"))
+    }
+
+    override fun onPartialResult(p0: String?) {
+
+    }
+
+    override fun onTimeout() {
+        recognizer!!.cancel()
+        recognizer = null
+        setUiState(STATE_READY)
+    }
+
+    override fun onError(p0: java.lang.Exception?) {
+        p0?.printStackTrace()
+    }
+
 }
+
