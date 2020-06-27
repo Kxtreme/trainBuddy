@@ -313,7 +313,6 @@ class MainActivity : AppCompatActivity(), SensorEventListener, RecognitionListen
         }
     }
 
-
     /*
     * represents one exercise done
     * */

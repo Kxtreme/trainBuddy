@@ -49,7 +49,7 @@ object Controller {
 
             override fun onFail(error: String) {
             }
-        }, DataManager.INSTANCE.mainURL + "/api/trainings/"+id+"/finished", context, true, headers)
+        }, DataManager.INSTANCE.mainURL + "/api/trainings/"+id+"/finished", context, false, headers)
     }
 
     fun notifyExerciseComplete(context: Context, id: String, state: String) {
@@ -65,7 +65,7 @@ object Controller {
 
             override fun onFail(error: String) {
             }
-        }, DataManager.INSTANCE.mainURL + "/api/trainings/"+id+"/"+state, context, true, headers)
+        }, DataManager.INSTANCE.mainURL + "/api/trainings/"+id+"/"+state, context, false, headers)
     }
 
     fun cleanTrainings() {
