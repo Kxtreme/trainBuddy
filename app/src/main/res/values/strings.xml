@@ -15,4 +15,6 @@
     <string name="button_stop">Stop</string>
     <string name="share_subject">Sensors data</string>
     <string name="training_done">Treino completo</string>
+    <string name="date">Date:</string>
+    <string name="state">State</string>
 </resources>

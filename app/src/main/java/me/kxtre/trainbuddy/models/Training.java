@@ -13,13 +13,15 @@ import me.kxtre.trainbuddy.interfaces.BasicCallBack;
 public class Training {
     private Integer ID;
     private String name;
+    private String date;
     private List<Exercise> exercises;
     private Boolean isDone;
 
-    public Training(Integer ID, String name, Boolean isDone, List<Exercise> exercises) {
+    public Training(Integer ID, String name, Boolean isDone, String date,  List<Exercise> exercises) {
         this.ID = ID;
         this.name = name;
         this.isDone = isDone;
+        this.date = date.split("T")[0];
         this.exercises = exercises;
     }
 
@@ -33,6 +35,10 @@ public class Training {
 
     public Boolean getDone() {
         return isDone;
+    }
+
+    public String getDate() {
+        return date;
     }
 
     public void setDone(Boolean done) {
@@ -62,6 +68,7 @@ public class Training {
             return new Training(o.getInt("id"),
                     o.getString("name"),
                     o.getInt("finished") == 1,
+            o.getString("created_at"),
             Exercise.parseArray(o.getJSONArray("exercises")));
     }
 }
