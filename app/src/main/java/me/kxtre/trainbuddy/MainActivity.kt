@@ -70,7 +70,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener, RecognitionListen
         )
         DataManager.INSTANCE.sharedPreferences = sharedPreferences
         evaluateLoginStatus()
-
+        //represents the decision tree of long main button click
         button.setOnLongClickListener { _button ->
             when (StateController.state) {
                 State.Initial -> initialButtonLongClick(_button)
@@ -85,6 +85,9 @@ class MainActivity : AppCompatActivity(), SensorEventListener, RecognitionListen
         SetupTask(this).execute()
     }
 
+    /*
+    * request user permissions needed
+    * */
     private fun requestPermissions() {
 
         // Check if user has given permission to record audio
@@ -107,6 +110,9 @@ class MainActivity : AppCompatActivity(), SensorEventListener, RecognitionListen
         super.onDestroy()
     }
 
+    /*
+    * check with server the login status
+    * */
     private fun evaluateLoginStatus() {
         val button = binding.buttonMain
         AuthenticationController.checkAuthentication(this, object : Callback {
@@ -123,31 +129,49 @@ class MainActivity : AppCompatActivity(), SensorEventListener, RecognitionListen
         })
     }
 
+    /*
+    * button action on long click when already logged
+    * */
     private fun loggedButtonLongClick(_button: View): Boolean {
         goToMoreOptionsView(this)
         return true
     }
 
+    /*
+    * represents the action to go to the more options activity
+    * */
     private fun goToMoreOptionsView(mainActivity: MainActivity) {
         val intent = Intent(this, OptionsActivity::class.java)
         startActivityForResult(intent, INTENT_START_TRAINING)
     }
 
+    /*
+    * button action on long click when not logged
+    * */
     private fun guestButtonLongClick(_button: View): Boolean {
         goToRegisterView(this)
         return true
     }
 
+    /*
+    * represents the action to go to the register activity
+    * */
     private fun goToRegisterView(mainActivity: MainActivity) {
         val intent = Intent(this, RegisterActivity::class.java)
         startActivityForResult(intent, INTENT_STATE_CHANGE)
     }
 
+    /*
+    * button action on long click when not sure if logged or not
+    * */
     private fun initialButtonLongClick(button: View): Boolean {
         Toast.makeText(this, R.string.not_available, Toast.LENGTH_SHORT).show()
         return true
     }
 
+    /*
+    * represents the decision tree when the main button is clicked
+    * */
     fun mainButtonClick(button: View) {
         when (StateController.state) {
             State.Initial -> initialButtonClick(button)
@@ -156,6 +180,9 @@ class MainActivity : AppCompatActivity(), SensorEventListener, RecognitionListen
         }
     }
 
+    /*
+    * button action on click when not sure if logged or not
+    * */
     private fun initialButtonClick(button: View) {
         Toast.makeText(this, R.string.not_available, Toast.LENGTH_SHORT).show()
     }
@@ -164,11 +191,17 @@ class MainActivity : AppCompatActivity(), SensorEventListener, RecognitionListen
         goToLoginView(this)
     }
 
+    /*
+    * button action on click when not logged
+    * */
     private fun goToLoginView(mainActivity: MainActivity) {
         val intent = Intent(this, LoginActivity::class.java)
         startActivityForResult(intent, INTENT_STATE_CHANGE)
     }
 
+    /*
+    * button action on click when logged
+    * */
     private fun loggedButtonClick(button: View) {
         StateController.cleanTraining()
         StateController.exercise = null
@@ -178,10 +211,13 @@ class MainActivity : AppCompatActivity(), SensorEventListener, RecognitionListen
             Toast.makeText(this, R.string.training_not_available, Toast.LENGTH_SHORT).show()
             return
         }
-        executeTraining(button, training)
+        executeTraining(training)
     }
 
-    private fun executeTraining(button: View, training: Training) {
+    /*
+    * action to execute the training
+    * */
+    private fun executeTraining(training: Training) {
         if(StateController.training == null) {
             startListeners()
         }
@@ -189,14 +225,12 @@ class MainActivity : AppCompatActivity(), SensorEventListener, RecognitionListen
         executeNextExercise()
     }
 
+    /*
+    * action to execute the next exercise in the training
+    * it should also determine if the training is complete or not
+    * */
     private fun executeNextExercise() {
         val exercises = StateController.training?.exercises
-        if (exercises?.size == 0 || exercises?.indexOf(StateController.exercise) == exercises?.size?.minus(
-                1
-            )
-        ) {
-            notifyTrainingComplete()
-        }
         if (StateController.exercise == null) {
             if (exercises?.size == 0) {
                 Toast.makeText(
@@ -211,18 +245,16 @@ class MainActivity : AppCompatActivity(), SensorEventListener, RecognitionListen
         }
         val index = exercises?.indexOf(StateController.exercise)?.plus(1)
         if (index != null && index >= exercises.size) {
-
-            //treino completo
-            Toast.makeText(applicationContext, getString(R.string.training_done), Toast.LENGTH_LONG)
-                .show()
-            redrawExerciseList()
-            stopListeners()
-            StateController.training = null
+            notifyTrainingComplete()
             return
         }
         executeExercise(index?.let { exercises[it] })
     }
 
+    /*
+    * start the sensors listening
+    * includes the accelerometer and the voice recognition services
+    * */
     private fun startListeners() {
         recognizeMicrophone()
         mSensorManager.registerListener(
@@ -231,11 +263,23 @@ class MainActivity : AppCompatActivity(), SensorEventListener, RecognitionListen
         )
     }
 
+    /*
+    * stop the sensors listening
+    * includes the accelerometer and the voice recognition services
+    * */
     private fun stopListeners() {
         mSensorManager.unregisterListener(this)
         stopRecognizeMicrophone()
     }
 
+    /*
+    * start the exercise
+    * includes register the exercise listener for the accelerometer data output
+    * includes register an exercise count listener
+    *   listener includes notify the exercise increments
+    *   listener includes notify if the training is done
+    *   listener includes execute the next exercise in training when done
+    * */
     private fun executeExercise(exercise: Exercise?) {
         if (exercise == null) {
             return
@@ -253,6 +297,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener, RecognitionListen
                     }
 
                 });
+                notifyExerciseComplete()
                 executeNextExercise()
             }
         })
@@ -266,10 +311,24 @@ class MainActivity : AppCompatActivity(), SensorEventListener, RecognitionListen
         }
     }
 
+
+    /*
+    * represents one exercise done
+    * */
+    private fun notifyExerciseComplete() {
+        TODO("Not yet implemented")
+    }
+
+    /*
+        * represents what to do on exercise count change
+        * */
     private fun incrementExerciseCounter() {
         redrawExerciseList()
     }
 
+    /*
+    * represents the UI redraw for list update
+    * */
     private fun redrawExerciseList() {
         val exercisesAdapter = ExercisesAdapter(
             this,
@@ -294,10 +353,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener, RecognitionListen
                 return
             }
             try {
-                executeTraining(
-                    findViewById(R.id.button_main),
-                    Controller.findByIdInAvailableTrainings(trainingID)
-                )
+                executeTraining(Controller.findByIdInAvailableTrainings(trainingID))
             } catch (e: Error) {
                 Toast.makeText(this, R.string.training_not_available, Toast.LENGTH_SHORT).show()
             }
@@ -314,8 +370,15 @@ class MainActivity : AppCompatActivity(), SensorEventListener, RecognitionListen
         listener.onChange(x, y, z)
     }
 
+    /*
+    * represents the set of actions to occour when the training is complete
+    * */
     private fun notifyTrainingComplete() {
-        Toast.makeText(this, "Training", Toast.LENGTH_SHORT).show()
+        Toast.makeText(applicationContext, getString(R.string.training_done), Toast.LENGTH_LONG)
+            .show()
+        redrawExerciseList()
+        stopListeners()
+        StateController.training = null
     }
 
     private class SetupTask internal constructor(activity: MainActivity) :
@@ -337,7 +400,9 @@ class MainActivity : AppCompatActivity(), SensorEventListener, RecognitionListen
 
     }
 
-
+    /*
+    * represents the start the microphone recognition service
+    * */
     private fun recognizeMicrophone() {
         if (recognizer != null) {
             recognizer!!.cancel()
@@ -351,6 +416,9 @@ class MainActivity : AppCompatActivity(), SensorEventListener, RecognitionListen
         }
     }
 
+    /*
+    * represents the stop the microphone recognition service
+    * */
     private fun stopRecognizeMicrophone() {
             try {
                 recognizer?.cancel()
@@ -359,6 +427,10 @@ class MainActivity : AppCompatActivity(), SensorEventListener, RecognitionListen
             } catch (e: IOException) {}
     }
 
+    /*
+    * represents the event of receiving an phrase result from the microphone recognition service
+    * includes send the phrase to the context engine for processing and redraw the UI
+    * */
     override fun onResult(p0: String?) {
         if(p0 == null) return
 
@@ -366,14 +438,24 @@ class MainActivity : AppCompatActivity(), SensorEventListener, RecognitionListen
         redrawExerciseList()
     }
 
+    /*
+    * represents the action of receiving partial results from the microphone recognition service
+    * */
     override fun onPartialResult(p0: String?) {
 
     }
 
+    /*
+    * represents the action of the microphone recognition service timing out
+    * includes restart the service
+    * */
     override fun onTimeout() {
         recognizeMicrophone()
     }
 
+    /*
+    * represents an Error event from the microphone recognition service
+    * */
     override fun onError(p0: java.lang.Exception?) {
         p0?.printStackTrace()
     }
