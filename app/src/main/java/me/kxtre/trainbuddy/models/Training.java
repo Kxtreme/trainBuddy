@@ -14,8 +14,9 @@ public class Training {
     private Integer ID;
     private String name;
     private List<Exercise> exercises;
+    private Boolean isDone;
 
-    public Training(Integer ID, String name, List<Exercise> exercises) {
+    public Training(Integer ID, String name, Boolean isDone, List<Exercise> exercises) {
         this.ID = ID;
         this.name = name;
         this.exercises = exercises;
@@ -27,6 +28,14 @@ public class Training {
 
     public String getName() {
         return name;
+    }
+
+    public Boolean getDone() {
+        return isDone;
+    }
+
+    public void setDone(Boolean done) {
+        isDone = done;
     }
 
     public List<Exercise> getExercises() {
@@ -50,7 +59,8 @@ public class Training {
 
     private static Training parse(JSONObject o) throws JSONException {
             return new Training(o.getInt("id"),
-            o.getString("name"),
+                    o.getString("name"),
+                    o.getBoolean("finished"),
             Exercise.parseArray(o.getJSONArray("exercises")));
     }
 }

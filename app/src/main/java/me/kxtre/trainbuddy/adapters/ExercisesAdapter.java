@@ -41,7 +41,7 @@ public class ExercisesAdapter  extends ArrayAdapter<Exercise> {
             if(p == StateController.INSTANCE.getExercise()) {
                 base.setBackgroundColor(0xFFE1E1E1);
             } else {
-                base.setBackgroundColor(0xFFFFFFFF);;
+                base.setBackgroundColor(0xFFFFFFFF);
             }
         }
         return v;

@@ -36,6 +36,38 @@ object Controller {
         }, DataManager.INSTANCE.mainURL + "/api/trainings", context, true, headers)
     }
 
+    fun notifyTrainingComplete(context: Context, id: String) {
+        val headers =
+            generateAuthenticationHeaders(DataManager.INSTANCE.storedUserJWT)
+        HttpUtils.Get(object : HttpCallBack {
+            @Throws(JSONException::class)
+            override fun onResult(response: JSONObject) {
+            }
+
+            override fun onResult(response: String) {
+            }
+
+            override fun onFail(error: String) {
+            }
+        }, DataManager.INSTANCE.mainURL + "/api/trainings/"+id+"/finished", context, true, headers)
+    }
+
+    fun notifyExerciseComplete(context: Context, id: String, state: String) {
+        val headers =
+            generateAuthenticationHeaders(DataManager.INSTANCE.storedUserJWT)
+        HttpUtils.Get(object : HttpCallBack {
+            @Throws(JSONException::class)
+            override fun onResult(response: JSONObject) {
+            }
+
+            override fun onResult(response: String) {
+            }
+
+            override fun onFail(error: String) {
+            }
+        }, DataManager.INSTANCE.mainURL + "/api/trainings/"+id+"/"+state, context, true, headers)
+    }
+
     fun cleanTrainings() {
         availableTrainings.forEach { it.exercises.forEach { it.reset() } }
     }

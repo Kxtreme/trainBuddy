@@ -9,7 +9,7 @@ object ContextEngine {
     * represents the automatic decision of the training to be done
     * */
     fun decideBestTraining(trainings: List<Training>): Training? {
-        return trainings[0]
+        return trainings.filter { !it.done }.getOrNull(0)
 
     }
 
