@@ -330,12 +330,14 @@ class MainActivity : AppCompatActivity(), SensorEventListener, RecognitionListen
     * represents the UI redraw for list update
     * */
     private fun redrawExerciseList() {
-        val exercisesAdapter = ExercisesAdapter(
-            this,
-            R.layout.list_item_exercise,
-            StateController.exercisesHistory
-        )
-        binding.listExercises.adapter = exercisesAdapter
+        StateController.training?.exercises?.let {
+            val exercisesAdapter = ExercisesAdapter(
+                this,
+                R.layout.list_item_exercise,
+                it
+            )
+            binding.listExercises.adapter = exercisesAdapter
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
