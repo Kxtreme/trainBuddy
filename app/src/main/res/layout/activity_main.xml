@@ -9,6 +9,15 @@
         android:orientation="vertical"
         tools:context=".MainActivity">
 
+        <TextView
+            android:id="@+id/trainingName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Exercise List"
+            android:textAlignment="center"
+            android:textSize="@dimen/text_size"
+            android:layout_margin="@dimen/layout_margin"/>
+
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="0dp"
@@ -48,6 +57,6 @@
             android:layout_weight="0"
             android:longClickable="true"
             android:onClick="mainButtonClick"
-            android:text="@string/retrieving_state" />
+            android:text="@string/start_training_more_options" />
     </LinearLayout>
 </layout>

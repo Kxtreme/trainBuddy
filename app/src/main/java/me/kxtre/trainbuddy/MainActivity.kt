@@ -46,7 +46,6 @@ class MainActivity : AppCompatActivity(), SensorEventListener, RecognitionListen
        System.loadLibrary("kaldi_jni")
     }
 
-
     private lateinit var binding: ActivityMainBinding
     private lateinit var mSensorManager: SensorManager
     private var model: Model? = null
@@ -58,7 +57,6 @@ class MainActivity : AppCompatActivity(), SensorEventListener, RecognitionListen
 
     }
 
-
     private val PERMISSIONS_REQUEST_RECORD_AUDIO = 1
     val SHARED_PREFERENCES = "Shared"
 
@@ -66,23 +64,28 @@ class MainActivity : AppCompatActivity(), SensorEventListener, RecognitionListen
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         val button = binding.buttonMain
+        button.visibility = View.INVISIBLE
+        button.isClickable = false
+        binding.trainingName.text = getString(R.string.retrieving_state)
+
         val sharedPreferences = getSharedPreferences(
             SHARED_PREFERENCES,
             Context.MODE_PRIVATE
         )
+
         DataManager.INSTANCE.sharedPreferences = sharedPreferences
         evaluateLoginStatus()
         //represents the decision tree of long main button click
-        button.setOnLongClickListener { _button ->
-            when (StateController.state) {
-                State.Initial -> initialButtonLongClick(_button)
-                State.GUEST -> guestButtonLongClick(_button)
-                State.LOGGED -> loggedButtonLongClick(_button)
-            }
-        }
+//        button.setOnLongClickListener { _button ->
+//            when (StateController.state) {
+//                State.Initial -> initialButtonLongClick(_button)
+//                State.GUEST -> guestButtonLongClick(_button)
+//                State.LOGGED -> loggedButtonLongClick(_button)
+//            }
+//        }
+//        requestPermissions()
         mSensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
         mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
-        //requestPermissions()
 
         SetupTask(this).execute()
     }
@@ -91,7 +94,6 @@ class MainActivity : AppCompatActivity(), SensorEventListener, RecognitionListen
     * request user permissions needed
     * */
     private fun requestPermissions() {
-
         // Check if user has given permission to record audio
         val permissionCheck = ContextCompat.checkSelfPermission(
             applicationContext,
@@ -116,13 +118,13 @@ class MainActivity : AppCompatActivity(), SensorEventListener, RecognitionListen
     * check with server the login status
     * */
     private fun evaluateLoginStatus() {
-        val button = binding.buttonMain
+        //val button = binding.buttonMain
         AuthenticationController.checkAuthentication(this, object : Callback {
 
             override fun onSucess() {
                 StateController.changeState(State.LOGGED)
-                button.text = getString(R.string.start_training_more_options)
-                requestPermissions()
+                //button.text = getString(R.string.start_training_more_options)
+                goToTrainingList(this@MainActivity)
             }
 
             override fun onError() {
@@ -131,6 +133,11 @@ class MainActivity : AppCompatActivity(), SensorEventListener, RecognitionListen
                 goToLoginView(this@MainActivity)
             }
         })
+    }
+
+    private fun goToTrainingList(mainActivity: MainActivity) {
+        val intent = Intent(this, TrainingActivity::class.java)
+        startActivityForResult(intent, INTENT_START_TRAINING)
     }
 
     /*
@@ -222,6 +229,8 @@ class MainActivity : AppCompatActivity(), SensorEventListener, RecognitionListen
     * action to execute the training
     * */
     private fun executeTraining(training: Training) {
+        requestPermissions()
+
         if(StateController.training == null) {
             startListeners()
         }
@@ -358,6 +367,12 @@ class MainActivity : AppCompatActivity(), SensorEventListener, RecognitionListen
             return
         }
         if (requestCode == INTENT_START_TRAINING) {
+            if(!data!!.getBooleanExtra("done", false)){
+                binding.buttonMain.visibility = View.VISIBLE
+                binding.buttonMain.isClickable = true
+            }
+            binding.trainingName.text = data.getStringExtra("trainingName")
+
             val trainingID = data!!.getIntExtra("trainingID", 0)
             if (trainingID == 0) {
                 return
@@ -368,6 +383,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener, RecognitionListen
                 Toast.makeText(this, R.string.training_not_available, Toast.LENGTH_SHORT).show()
             }
         }
+
     }
 
     override fun onAccuracyChanged(p0: Sensor?, p1: Int) {

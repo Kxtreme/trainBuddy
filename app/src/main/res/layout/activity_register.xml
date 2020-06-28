@@ -11,6 +11,14 @@
         tools:context=".RegisterActivity">
 
 
+        <TextView
+            android:id="@+id/trainingName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="New Account"
+            android:textAlignment="center"
+            android:textSize="@dimen/text_size"
+            android:layout_margin="@dimen/layout_margin"/>
 
         <EditText
             android:id="@+id/editName"
