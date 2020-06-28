@@ -7,63 +7,65 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
+        android:padding="@dimen/small_padding"
         tools:context=".LoginActivity">
 
-        <Space
+        <EditText
+            android:id="@+id/editEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="2" />
-
-        <TextView
-            android:id="@+id/textView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="0"
-            android:text="Login" />
+            android:layout_marginTop="@dimen/layout_margin"
+            android:ems="10"
+            android:hint="@string/e_mail"
+            android:inputType="textEmailAddress"
+            android:paddingTop="@dimen/small_padding" />
 
         <EditText
-            android:id="@+id/editText_login"
+            android:id="@+id/editPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/layout_margin"
             android:ems="10"
-            android:hint="Login"
-            android:inputType="textPersonName" />
-
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            android:hint="@string/password"
+            android:inputType="textPassword"
+            android:paddingTop="@dimen/small_padding" />
 
         <TextView
-            android:id="@+id/textView2"
+            android:id="@+id/forgot_password_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="0"
-            android:text="Password" />
-
-        <EditText
-            android:id="@+id/editText_password"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="Password"
-            android:inputType="textPassword" />
-
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            android:padding="@dimen/small_padding"
+            android:text="@string/forgot_password"
+            android:textAlignment="textStart"
+            android:textColor="@android:color/holo_blue_dark"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:onClick="onResetPasswordClick"/>
 
         <Button
             android:id="@+id/button"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="onLoginClick"
-            android:text="Login" />
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/layout_margin"
+            android:text="@string/login"
+            android:onClick="onLoginClick"/>
 
-        <Space
+        <TextView
+            android:id="@+id/new_account_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="2" />
+            android:layout_marginTop="@dimen/layout_margin"
+            android:text="@string/create_new_account"
+            android:textAlignment="center"
+            android:textColor="@android:color/holo_blue_dark"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:onClick="goToRegister"/>
+
     </LinearLayout>
 </layout>

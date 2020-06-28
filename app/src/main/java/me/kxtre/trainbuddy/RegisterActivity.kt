@@ -13,19 +13,21 @@ import me.kxtre.trainbuddy.interfaces.Callback
 
 class RegisterActivity : AppCompatActivity() {
     private lateinit var binding: ActivityRegisterBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_register)
     }
+
     fun onLoginClick(v: View) {
-        val email = binding.editTextLogin.text.toString()
-        val password =  binding.editTextPassword.text.toString()
-        val pass_confirm = binding.editTextConfirm.text.toString()
-        val name = binding.editTextName.text.toString()
-        val birth = binding.editTextBirthDay.text.toString()
-        val height = binding.editTextHeight.text.toString().toInt()
-        val weight = binding.editTextWeight.text.toString().toInt()
-        val gender = when(binding.toggleButtonGender.text.toString() == "Male") {
+        val email = binding.editEmail.text.toString()
+        val password =  binding.editPassword.text.toString()
+        val pass_confirm = binding.editPasswordConfirmation.text.toString()
+        val name = binding.editName.text.toString()
+        val birth = binding.editBirthDate.text.toString()
+        val height = binding.editHeight.text.toString().toInt()
+        val weight = binding.editWeight.text.toString().toInt()
+        val gender = when(binding.genderSpinner.getSelectedItem().toString() == "Male") {
              true-> "M"
              false -> "F"
         }

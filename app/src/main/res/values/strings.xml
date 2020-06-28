@@ -1,5 +1,24 @@
 <resources>
     <string name="app_name">Train Buddy</string>
+    <string name="login">Login</string>
+    <string name="e_mail">E-mail</string>
+    <string name="password">Password</string>
+    <string name="create_new_account">Create new account</string>
+    <string name="forgot_password">Forgot Password?</string>
+    <string name="name">Name</string>
+    <string name="password_confirmation">Password Confirmation</string>
+    <string name="birth_date">Birth Date</string>
+    <string name="register">Register</string>
+    <string name="gender">Gender</string>
+    <string name="weight">Weight</string>
+    <string name="height">Height</string>
+    <string-array name="genders_array">
+        <item>Male</item>
+        <item>Female</item>
+    </string-array>
+    <string name="send_password_reset_link">Send Password Reset Link</string>
+
+
     <string name="login_register">Login/Register</string>
     <string name="start_training_more_options">Start Training/ More options</string>
     <string name="retrieving_state">Checking Status...</string>

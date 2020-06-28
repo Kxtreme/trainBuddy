@@ -95,4 +95,8 @@ public class AuthenticationController {
             }
         }, DataManager.INSTANCE.mainURL + "/api/login", params, context);
     }
+
+    public static void forgotPassword(@NotNull String email, @NotNull final Callback callback, @NotNull final Context context) {
+        //TODO
+    }
 }

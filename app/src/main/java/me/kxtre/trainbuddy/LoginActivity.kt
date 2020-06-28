@@ -1,8 +1,10 @@
 package me.kxtre.trainbuddy
 
 import android.app.Activity
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
@@ -19,7 +21,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     fun onLoginClick(v: View) {
-        AuthenticationController.login(binding.editTextLogin.text.toString(), binding.editTextPassword.text.toString(), object: Callback {
+        AuthenticationController.login(binding.editEmail.text.toString(), binding.editPassword.text.toString(), object: Callback {
             override fun onSucess() {
                 setResult(Activity.RESULT_OK)
                 finish()
@@ -30,5 +32,15 @@ class LoginActivity : AppCompatActivity() {
             }
 
         }, this)
+    }
+
+    fun goToRegister(v: View){
+        val intent = Intent(this, RegisterActivity::class.java)
+        startActivityForResult(intent, INTENT_STATE_CHANGE)
+    }
+
+    fun onResetPasswordClick(v: View) {
+        val intent = Intent(this, ForgotPasswordActivity::class.java)
+        startActivityForResult(intent, INTENT_STATE_CHANGE)
     }
 }

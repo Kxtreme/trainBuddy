@@ -80,7 +80,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener, RecognitionListen
         }
         mSensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
         mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
-        requestPermissions()
+        //requestPermissions()
 
         SetupTask(this).execute()
     }
@@ -120,11 +120,13 @@ class MainActivity : AppCompatActivity(), SensorEventListener, RecognitionListen
             override fun onSucess() {
                 StateController.changeState(State.LOGGED)
                 button.text = getString(R.string.start_training_more_options)
+                requestPermissions()
             }
 
             override fun onError() {
-                StateController.changeState(State.GUEST)
-                button.text = getString(R.string.login_register)
+                StateController.changeState(State.Initial)
+                //button.text = getString(R.string.login_register)
+                goToLoginView(this@MainActivity)
             }
         })
     }
@@ -341,7 +343,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener, RecognitionListen
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode != Activity.RESULT_OK) {
-            return;
+            return
         }
         if (requestCode == INTENT_STATE_CHANGE) {
             evaluateLoginStatus()
