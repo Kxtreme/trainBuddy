@@ -73,11 +73,11 @@ public abstract class Exercise {
     private static Exercise parse(JSONObject o) throws Exception {
         switch (o.getString("type")) {
             case "push_up":
-                return new ExercisePushUp(o.getInt("id"), o.getString("name"),
+                return new ExercisePushUp(o.getJSONObject("pivot").getInt("id"), o.getString("name"),
                         o.getJSONObject("pivot").getInt("quantity")
                 );
             case "abdominal":
-                return new ExerciseAbdominal(o.getInt("id"), o.getString("name"),
+                return new ExerciseAbdominal(o.getJSONObject("pivot").getInt("id"), o.getString("name"),
                         o.getJSONObject("pivot").getInt("quantity")
                 );
             default:

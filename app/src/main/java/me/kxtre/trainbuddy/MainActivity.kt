@@ -28,6 +28,8 @@ import me.kxtre.trainbuddy.interfaces.Callback
 import me.kxtre.trainbuddy.models.Exercise
 import me.kxtre.trainbuddy.models.State
 import me.kxtre.trainbuddy.models.Training
+import me.kxtre.trainbuddy.utils.HttpCallBack
+import me.kxtre.trainbuddy.utils.HttpUtils
 import org.json.JSONObject
 import org.kaldi.*
 import java.io.File
@@ -205,7 +207,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener, RecognitionListen
     * button action on click when logged
     * */
     private fun loggedButtonClick(button: View) {
-        StateController.cleanTraining()
+        //StateController.cleanTraining()
         StateController.exercise = null
         val trainings = Controller.availableTrainings
         val training = ContextEngine.decideBestTraining(trainings)
@@ -313,12 +315,16 @@ class MainActivity : AppCompatActivity(), SensorEventListener, RecognitionListen
         }
     }
 
-
     /*
     * represents one exercise done
     * */
     private fun notifyExerciseComplete() {
-        TODO("Not yet implemented")
+        val exercise = StateController.exercise ?: return
+        Controller.notifyExerciseComplete(this, exercise.id.toString(), when(exercise.percentage) {
+            100 -> "normal"
+            in 101..Int.MAX_VALUE -> "easy"
+            else -> "hard"
+        })
     }
 
     /*
@@ -332,12 +338,14 @@ class MainActivity : AppCompatActivity(), SensorEventListener, RecognitionListen
     * represents the UI redraw for list update
     * */
     private fun redrawExerciseList() {
-        val exercisesAdapter = ExercisesAdapter(
-            this,
-            R.layout.list_item_exercise,
-            StateController.exercisesHistory
-        )
-        binding.listExercises.adapter = exercisesAdapter
+        StateController.training?.exercises?.let {
+            val exercisesAdapter = ExercisesAdapter(
+                this,
+                R.layout.list_item_exercise,
+                it
+            )
+            binding.listExercises.adapter = exercisesAdapter
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -380,6 +388,9 @@ class MainActivity : AppCompatActivity(), SensorEventListener, RecognitionListen
             .show()
         redrawExerciseList()
         stopListeners()
+        StateController.training?.done = true
+        Controller.notifyTrainingComplete(this, StateController.training?.id.toString())
+
         StateController.training = null
     }
 

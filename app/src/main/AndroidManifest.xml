@@ -15,13 +15,16 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".RecordActivity"
-            android:screenOrientation="portrait"/>
+        <activity android:name=".TrainingActivity"></activity>
+        <activity
+            android:name=".RecordActivity"
+            android:screenOrientation="portrait" />
         <activity android:name=".OptionsActivity" />
         <activity android:name=".RegisterActivity" />
         <activity android:name=".LoginActivity" />
         <activity android:name=".ForgotPasswordActivity" />
-        <activity android:name=".MainActivity"
+        <activity
+            android:name=".MainActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
