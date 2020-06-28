@@ -54,7 +54,6 @@ class MainActivity : AppCompatActivity(), SensorEventListener, RecognitionListen
     private var listener: SensorListener = object : SensorListener {
         override fun onChange(x: Float, y: Float, z: Float) {
         }
-
     }
 
     private val PERMISSIONS_REQUEST_RECORD_AUDIO = 1
