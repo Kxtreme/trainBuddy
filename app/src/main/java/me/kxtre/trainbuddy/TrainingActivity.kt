@@ -29,7 +29,7 @@ class TrainingActivity : AppCompatActivity() {
     private fun registerListeners() {
         binding.listviewTrainings.setOnItemClickListener { adapterView, view, i, l ->
             val training =  adapterView.getItemAtPosition(i) as Training
-            val intent = intent
+            val intent = Intent(applicationContext, ExerciseActivity::class.java)
             intent.putExtra("trainingID", training.id)
             intent.putExtra("trainingName", training.name)
 
@@ -38,9 +38,7 @@ class TrainingActivity : AppCompatActivity() {
             } else {
                 intent.putExtra("done", false)
             }
-
-            setResult(Activity.RESULT_OK, intent)
-            finish()
+            startActivity(intent)
         }
     }
     private fun setAdapters() {

@@ -2,6 +2,7 @@ package me.kxtre.trainbuddy.controllers;
 
 import android.content.SharedPreferences;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -39,4 +40,8 @@ public enum DataManager {
         return sharedPreferences;
     }
 
+    @NotNull
+    public User getUser() {
+        return user;
+    }
 }

@@ -15,7 +15,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".TrainingActivity"/>
+        <activity android:name=".ExerciseActivity"></activity>
+        <activity android:name=".TrainingActivity" />
         <activity
             android:name=".RecordActivity"
             android:screenOrientation="portrait" />
