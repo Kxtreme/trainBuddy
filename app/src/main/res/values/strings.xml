@@ -24,7 +24,7 @@
     <string name="ic_profile">Profile</string>
 
 
-    <string name="retrieving_state">Checking Status...</string>
+    <string name="retrieving_state"></string>
     <string name="not_available">Resource not available yet</string>
     <string name="training_not_available">Training is still not available to you</string>
     <string name="progress">Progress:</string>

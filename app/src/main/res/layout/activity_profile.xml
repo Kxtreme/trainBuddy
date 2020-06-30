@@ -7,9 +7,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="@dimen/small_padding"
-        android:orientation="vertical"
-        tools:context=".RegisterActivity">
-
+        tools:context=".ProfileActivity"
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/trainingName"
@@ -20,86 +19,145 @@
             android:textSize="@dimen/text_size"
             android:layout_margin="@dimen/layout_margin"/>
 
-        <EditText
-            android:id="@+id/editName"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/layout_margin"
-            android:ems="10"
-            android:hint="@string/name"
-            android:inputType="text"
-            android:paddingTop="@dimen/small_padding" />
+            android:orientation="horizontal">
 
-        <EditText
-            android:id="@+id/editEmail"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/layout_margin"
-            android:ems="10"
-            android:hint="@string/e_mail"
-            android:inputType="textEmailAddress"
-            android:paddingTop="@dimen/small_padding" />
+            <TextView
+                android:id="@+id/name_label"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:text="@string/name"
+                android:textAlignment="center"
+                android:textSize="18sp" />
 
-        <EditText
-            android:id="@+id/editPassword"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/layout_margin"
-            android:ems="10"
-            android:hint="@string/password"
-            android:inputType="textPassword"
-            android:paddingTop="@dimen/small_padding" />
-
-        <EditText
-            android:id="@+id/editPasswordConfirmation"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/layout_margin"
-            android:ems="10"
-            android:hint="@string/password_confirmation"
-            android:inputType="textPassword"
-            android:paddingTop="@dimen/small_padding" />
-
-        <EditText
-            android:id="@+id/editBirthDate"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="date"
-            android:layout_marginTop="@dimen/layout_margin"
-            android:hint="@string/birth_date"
-            android:paddingTop="@dimen/small_padding" />
+            <TextView
+                android:id="@+id/textName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="18sp"/>
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/layout_margin"
             android:orientation="horizontal">
 
-            <Spinner
-                android:id="@+id/genderSpinner"
-                android:layout_width="wrap_content"
+            <TextView
+                android:id="@+id/email_label"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:entries="@array/genders_array"
-                android:hint="@string/gender" />
+                android:layout_weight="2"
+                android:gravity="center"
+                android:text="@string/e_mail"
+                android:textAlignment="center"
+                android:textSize="18sp"/>
+
+            <TextView
+                android:id="@+id/textEmail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ems="10"
+                android:textSize="18sp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/birth_date_label"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:gravity="center"
+                android:text="@string/birth_date"
+                android:textAlignment="center"
+                android:textSize="18sp"/>
+
+            <TextView
+                android:id="@+id/textBirthDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ems="10"
+                android:textSize="18sp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/gender_label"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:gravity="center"
+                android:text="@string/gender"
+                android:textAlignment="center"
+                android:textSize="18sp"/>
+
+            <TextView
+                android:id="@+id/textGender"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ems="10"
+                android:textSize="18sp"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/weight_label"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:gravity="center"
+                android:text="@string/weight"
+                android:textAlignment="center"
+                android:textSize="18sp"/>
 
             <EditText
                 android:id="@+id/editWeight"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:ems="10"
-                android:hint="@string/weight"
                 android:inputType="number" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/height_label"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:gravity="center"
+                android:text="@string/height"
+                android:textAlignment="center"
+                android:textSize="18sp"/>
 
             <EditText
                 android:id="@+id/editHeight"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:ems="10"
-                android:hint="@string/height"
-                android:inputType="number" />
+                android:inputType="number"/>
         </LinearLayout>
 
         <Button
@@ -110,14 +168,14 @@
             android:layout_marginTop="@dimen/layout_margin"
             android:text="@string/save_profile"
             android:onClick="onSaveClick"/>
-        <Button
-            android:id="@+id/button_rollback"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="@dimen/layout_margin"
-            android:text="@string/rollback"
-            android:onClick="onRollClick"/>
+<!--        <Button-->
+<!--            android:id="@+id/button_rollback"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_gravity="center_horizontal"-->
+<!--            android:layout_marginTop="@dimen/layout_margin"-->
+<!--            android:text="@string/rollback"-->
+<!--            android:onClick="onRollClick"/>-->
 
     </LinearLayout>
 </layout>

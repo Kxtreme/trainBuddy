@@ -7,7 +7,6 @@ import android.hardware.SensorManager
 import android.os.AsyncTask
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.transition.Visibility
 import android.view.View
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
@@ -16,7 +15,6 @@ import me.kxtre.trainbuddy.controllers.ContextEngine
 import me.kxtre.trainbuddy.controllers.Controller
 import me.kxtre.trainbuddy.controllers.StateController
 import me.kxtre.trainbuddy.databinding.ActivityExerciseBinding
-import me.kxtre.trainbuddy.databinding.ActivityMainBinding
 import me.kxtre.trainbuddy.interfaces.BasicCallBack
 import me.kxtre.trainbuddy.models.Exercise
 import me.kxtre.trainbuddy.models.Training
@@ -25,6 +23,7 @@ import org.kaldi.*
 import java.io.File
 import java.io.IOException
 import java.lang.ref.WeakReference
+
 interface SensorListener {
     fun onChange(x: Float, y: Float, z: Float)
 }
@@ -55,12 +54,14 @@ class ExerciseActivity : AppCompatActivity(), SensorEventListener, RecognitionLi
         if (trainingID == 0) {
             return
         }
-        val isDone = intent!!.getBooleanExtra("done", false)
-        if(isDone) {
+        binding.trainingName.text = intent!!.getStringExtra("trainingName")
+
+        if(intent!!.getBooleanExtra("done", false)) {
             binding.buttonMain.visibility = View.GONE
         }
+
         try {
-           training =Controller.findByIdInAvailableTrainings(trainingID)
+           training = Controller.findByIdInAvailableTrainings(trainingID)
             StateController.training = training
             redrawExerciseList()
         } catch (e: Error) {
