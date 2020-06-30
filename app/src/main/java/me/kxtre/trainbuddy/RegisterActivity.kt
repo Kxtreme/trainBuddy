@@ -7,7 +7,6 @@ import android.view.View
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import me.kxtre.trainbuddy.controllers.AuthenticationController
-import me.kxtre.trainbuddy.controllers.StateController
 import me.kxtre.trainbuddy.databinding.ActivityRegisterBinding
 import me.kxtre.trainbuddy.interfaces.Callback
 

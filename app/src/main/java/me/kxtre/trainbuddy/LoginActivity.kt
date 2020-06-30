@@ -4,15 +4,12 @@ import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
-import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import me.kxtre.trainbuddy.controllers.AuthenticationController
 import me.kxtre.trainbuddy.controllers.StateController.INTENT_STATE_CHANGE
 import me.kxtre.trainbuddy.databinding.ActivityLoginBinding
 import me.kxtre.trainbuddy.interfaces.Callback
-import kotlin.system.exitProcess
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
@@ -47,6 +44,6 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         super.onBackPressed()
-        exitProcess(0)
+        finishAffinity()
     }
 }

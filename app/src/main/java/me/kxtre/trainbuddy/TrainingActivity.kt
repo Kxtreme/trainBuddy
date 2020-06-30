@@ -1,6 +1,5 @@
 package me.kxtre.trainbuddy
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
@@ -76,7 +75,7 @@ class TrainingActivity : AppCompatActivity() {
                 AuthenticationController.logout(object:
                     Callback {
                     override fun onSucess() {
-                        startActivity(Intent(applicationContext, MainActivity::class.java))
+                        startActivity(Intent(applicationContext, LoginActivity::class.java))
                         finish()
                     }
                     override fun onError() {
@@ -93,5 +92,11 @@ class TrainingActivity : AppCompatActivity() {
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
         return true
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        //exitProcess(0)
+        finishAffinity()
     }
 }

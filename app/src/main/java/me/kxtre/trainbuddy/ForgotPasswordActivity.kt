@@ -3,7 +3,6 @@ package me.kxtre.trainbuddy
 import android.app.Activity
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import me.kxtre.trainbuddy.controllers.AuthenticationController
@@ -28,7 +27,7 @@ class ForgotPasswordActivity : AppCompatActivity() {
             }
 
             override fun onError() {
-                Toast.makeText(applicationContext,"Request Password Failed", Toast.LENGTH_SHORT).show()
+                //Toast.makeText(applicationContext,"Request Password Failed", Toast.LENGTH_SHORT).show()
             }
 
         }, this)

@@ -1,6 +1,5 @@
 package me.kxtre.trainbuddy
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -80,10 +79,9 @@ class ProfileActivity : AppCompatActivity() {
         }, DataManager.INSTANCE.mainURL + "/api/user", context, true, headers)
     }
 
-    fun onRollClick(v: View) {
-        val user = DataManager.INSTANCE.getUser()
-        binding.editHeight.setText(user.height)
-        binding.editWeight.setText(user.weight)
-    }
-
+//    fun onRollClick(v: View) {
+//        val user = DataManager.INSTANCE.getUser()
+//        binding.editHeight.setText(user.height)
+//        binding.editWeight.setText(user.weight)
+//    }
 }
