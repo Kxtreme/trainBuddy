@@ -35,7 +35,7 @@ class ExerciseAbdominal(ID: Int?, name: String?, repeats: Int?) :
         }
     }
     private fun checkDown(x: Float, y: Float, z: Float) {
-        if(z < -5) isUp = false
+        if(x < -5 && y < -5) isUp = false
     }
 
     private fun addToProgress() {

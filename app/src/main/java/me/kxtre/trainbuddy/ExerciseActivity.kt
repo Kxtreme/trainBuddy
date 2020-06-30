@@ -81,6 +81,7 @@ class ExerciseActivity : AppCompatActivity(), SensorEventListener, RecognitionLi
     fun mainButtonClick(button: View) {
         //StateController.cleanTraining()
         StateController.exercise = null
+        StateController.training = null
         executeTraining(training)
         binding.buttonMain.visibility = View.GONE
     }
