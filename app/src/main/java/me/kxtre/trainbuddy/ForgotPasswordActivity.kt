@@ -1,12 +1,14 @@
 package me.kxtre.trainbuddy
 
+import android.app.Activity
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import me.kxtre.trainbuddy.controllers.AuthenticationController
-import me.kxtre.trainbuddy.interfaces.Callback
 import me.kxtre.trainbuddy.databinding.ActivityForgotPasswordBinding
+import me.kxtre.trainbuddy.interfaces.Callback
 
 class ForgotPasswordActivity : AppCompatActivity() {
     private lateinit var binding: ActivityForgotPasswordBinding
@@ -21,11 +23,12 @@ class ForgotPasswordActivity : AppCompatActivity() {
 
         AuthenticationController.forgotPassword(email, object: Callback {
             override fun onSucess() {
-                //TODO
+                setResult(Activity.RESULT_OK)
+                finish()
             }
 
             override fun onError() {
-                //TODO
+                Toast.makeText(applicationContext,"Request Password Failed", Toast.LENGTH_SHORT).show()
             }
 
         }, this)

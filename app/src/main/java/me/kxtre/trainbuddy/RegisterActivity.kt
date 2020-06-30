@@ -19,14 +19,14 @@ class RegisterActivity : AppCompatActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_register)
     }
 
-    fun onLoginClick(v: View) {
+    fun onRegisterClick(v: View) {
         val email = binding.editEmail.text.toString()
         val password =  binding.editPassword.text.toString()
         val pass_confirm = binding.editPasswordConfirmation.text.toString()
         val name = binding.editName.text.toString()
         val birth = binding.editBirthDate.text.toString()
-        val height = binding.editHeight.text.toString().toInt()
-        val weight = binding.editWeight.text.toString().toInt()
+        val height = binding.editHeight.text.toString()
+        val weight = binding.editWeight.text.toString()
         val gender = when(binding.genderSpinner.getSelectedItem().toString() == "Male") {
              true-> "M"
              false -> "F"
@@ -36,7 +36,7 @@ class RegisterActivity : AppCompatActivity() {
             Toast.makeText(applicationContext,"Passwords don't match", Toast.LENGTH_SHORT).show()
             return
         }
-        AuthenticationController.register(email, password, name, birth, height, weight, gender, object:
+        AuthenticationController.register(email, password, pass_confirm, name, birth, height, weight, gender, object:
             Callback {
             override fun onSucess() {
                 setResult(Activity.RESULT_OK)
@@ -44,7 +44,7 @@ class RegisterActivity : AppCompatActivity() {
             }
 
             override fun onError() {
-                Toast.makeText(applicationContext,"Register Failed", Toast.LENGTH_SHORT).show()
+                //Toast.makeText(applicationContext,"Register Failed", Toast.LENGTH_SHORT).show()
             }
 
         }, this)

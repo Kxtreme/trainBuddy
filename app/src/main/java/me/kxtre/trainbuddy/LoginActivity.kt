@@ -12,6 +12,7 @@ import me.kxtre.trainbuddy.controllers.AuthenticationController
 import me.kxtre.trainbuddy.controllers.StateController.INTENT_STATE_CHANGE
 import me.kxtre.trainbuddy.databinding.ActivityLoginBinding
 import me.kxtre.trainbuddy.interfaces.Callback
+import kotlin.system.exitProcess
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
@@ -28,7 +29,7 @@ class LoginActivity : AppCompatActivity() {
             }
 
             override fun onError() {
-                Toast.makeText(applicationContext,"Login Failed",Toast.LENGTH_SHORT).show()
+                //Toast.makeText(applicationContext,"Login Failed",Toast.LENGTH_SHORT).show()
             }
 
         }, this)
@@ -42,5 +43,10 @@ class LoginActivity : AppCompatActivity() {
     fun onResetPasswordClick(v: View) {
         val intent = Intent(this, ForgotPasswordActivity::class.java)
         startActivityForResult(intent, INTENT_STATE_CHANGE)
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        exitProcess(0)
     }
 }

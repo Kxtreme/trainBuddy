@@ -5,12 +5,15 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import me.kxtre.trainbuddy.adapters.TrainingsAdapter
+import me.kxtre.trainbuddy.controllers.AuthenticationController
 import me.kxtre.trainbuddy.controllers.Controller
 import me.kxtre.trainbuddy.databinding.ActivityTrainingBinding
+import me.kxtre.trainbuddy.interfaces.Callback
 import me.kxtre.trainbuddy.models.Training
 
 
@@ -69,6 +72,20 @@ class TrainingActivity : AppCompatActivity() {
         when (item.itemId) {
             R.id.option_1 -> {
                 startActivity(Intent(applicationContext, ProfileActivity::class.java))
+                return true
+            }
+            R.id.option_2 -> {
+                AuthenticationController.logout(object:
+                    Callback {
+                    override fun onSucess() {
+                        startActivity(Intent(applicationContext, MainActivity::class.java))
+                        finish()
+                    }
+                    override fun onError() {
+                        Toast.makeText(applicationContext,"Logout Failed", Toast.LENGTH_SHORT).show()
+                    }
+
+                }, this)
                 return true
             }
             else -> super.onOptionsItemSelected(item)
