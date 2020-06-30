@@ -82,10 +82,8 @@ class ProfileActivity : AppCompatActivity() {
 
     fun onRollClick(v: View) {
         val user = DataManager.INSTANCE.getUser()
-        binding.textBirthDate.setText(user.bornDate)
-        binding.textEmail.setText(user.email)
         binding.editHeight.setText(user.height)
-        binding.textName.setText(user.name)
+        binding.editWeight.setText(user.weight)
     }
 
 }
