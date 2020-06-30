@@ -79,4 +79,13 @@ class ProfileActivity : AppCompatActivity() {
             }
         }, DataManager.INSTANCE.mainURL + "/api/user", context, true, headers)
     }
+
+    fun onRollClick(v: View) {
+        val user = DataManager.INSTANCE.getUser()
+        binding.editBirthDate.setText(user.bornDate)
+        binding.editEmail.setText(user.email)
+        binding.editHeight.setText(user.height)
+        binding.editName.setText(user.name)
+    }
+
 }
